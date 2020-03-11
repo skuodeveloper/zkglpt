@@ -1,0 +1,37 @@
+# DataSource Config
+spring:
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+#    schema: classpath:db/schema-h2.sql
+#    data: classpath:db/data-h2.sql
+    url: jdbc:mysql://60.190.149.52:33060/zkglpt?useUnicode=true&characterEncoding=utf8&autoReconnect=true&allowMultiQueries=true&useSSL=false&&serverTimezone=UTC
+    username: nhga
+    password: 0573@nhga
+    #   hikari数据源配置，
+    hikari:
+      connection-test-query: SELECT 1 FROM DUAL
+      connection-timeout: 30000
+      maximum-pool-size: 20
+      max-lifetime: 1800000
+      minimum-idle: 5
+#    druid:
+#            initialSize: 1 # 配置初始化大小
+#            minIdle: 200 # 配置连接池中最小闲置的可用连接的个数
+#            maxActive: 1000 # 配置连接池中最大可用连接的个数
+#            maxWait: 60000 # 配置获取连接等待超时的时间, 单位是毫秒
+#            timeBetweenEvictionRunsMillis: 60000 # 配置间隔多久才进行一次检测, 检测需要关闭的空闲连接, 单位是毫秒
+#            minEvictableIdleTimeMillis: 300000   # 配置一个连接在池中最小生存的时间, 单位是毫秒
+#            validationQuery: SELECT 1
+#            validationQueryTimeout: 60000
+#            testWhileIdle: true
+#            testOnBorrow: false
+#            testOnReturn: false
+#            poolPreparedStatements: true # 打开PSCache, 并且指定每个连接上PSCache的大小.分库分表较多的数据库，建议配置为false
+#            maxPoolPreparedStatementPerConnectionSize: 20
+#            maxOpenPreparedStatements: 20
+#            connection-init-sqls: SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
+
+# Logger config
+logging:
+  level:
+    com.nhga.zkglpt: debug

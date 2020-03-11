@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>到过武汉车辆查询</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="css/mui.min.css">
+		<!--<link rel="stylesheet" href="css/app.css" />-->
+		<style>
+			.oauth-area1 {
+				position: absolute;
+				top: 200px;
+				left: 10%;
+				font-size: 300%;
+				text-align: center;
+				width: 80%;
+				padding: 0px;
+				margin: 0px;
+			}
+		</style>
+		<style>
+			.oauth-area2 {
+				position: absolute;
+				top: 250px;
+				left: 10%;
+				text-align: center;
+				width: 80%;
+				padding: 0px;
+				margin: 0px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="mui-content">
+			<div class="mui-content-padded">
+				<div class="mui-input-row mui-search">
+					<input type="search" id="carNo" class="mui-input-clear" placeholder="请输入车牌号不需输浙F(例Q110F)">
+				</div>
+				<div class="mui-button-row">
+					<button id="sch" type="button" class="mui-btn mui-icon mui-btn-primary">查询</button>
+				</div>
+				<div id="his1" class="mui-content-padded oauth-area1">
+					
+				</div>
+				<div id="his2" class="mui-content-padded oauth-area2">
+					
+				</div>
+			</div>
+			<script src="js/mui.min.js"></script>
+			<script>
+				mui.init({
+					swipeBack: true
+				});
+
+				mui(".mui-button-row").on("tap", "#sch", function() {
+					var carNo = mui('#carNo')[0].value;
+					if(carNo == '') {
+						mui.toast('请输入车牌号');
+						return;
+					}
+
+					var url = 'http://60.190.149.52:8013/car/getByCarNo?carNo=' + carNo;
+					mui.ajax(url, {
+						data: "data",
+						dataType: 'JSON',
+						type: 'POST',
+						success: function(data) {
+							if(data == ''){
+								mui("#his1")[0].style.color="green"
+								mui("#his1")[0].innerHTML = '通过';
+        						mui("#his2")[0].style.color="green"
+								mui("#his2")[0].innerHTML = '该车辆为正常车辆，1月1日至2月2日没有到过湖北!';
+							}
+							else{
+								var car = JSON.parse(data);
+								if(car.iswh == '1'){
+									mui("#his1")[0].style.color="red"
+								mui("#his1")[0].innerHTML = '拦截';
+									mui("#his2")[0].style.color="red"
+									mui("#his2")[0].innerHTML = '该车辆在' + car.lasttime.substr(0,10) + '到过武汉！';
+								}
+								else{
+									mui("#his1")[0].style.color="orange"
+								mui("#his1")[0].innerHTML = '存疑';
+									mui("#his2")[0].style.color="orange"
+									mui("#his2")[0].innerHTML = '该车辆在' + car.lasttime.substr(0,10)  + '到过湖北，\r\n但没有到过武汉！';
+								}
+							}
+								
+						},
+						error: function(XMLHttpRequest, textStatus, errorThrown) {
+							console.log("接口出错;XMLHttpRequest.status：" +
+								XMLHttpRequest.status + ";XMLHttpRequest.readyState：" +
+								XMLHttpRequest.readyState + ";errorThrown：" +
+								errorThrown + ";textStatus：" + textStatus);
+						}
+					});
+				});
+			</script>
+	</body>
+
+</html>

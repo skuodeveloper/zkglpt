@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nhga.zkglpt.mapper.TblJewelryMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.nhga.zkglpt.model.TblJewelry">
+        <id column="id" property="id" />
+        <result column="wpmc" property="wpmc" />
+        <result column="sl" property="sl" />
+        <result column="zl" property="zl" />
+        <result column="jz" property="jz" />
+        <result column="tzms" property="tzms" />
+        <result column="fxsj" property="fxsj" />
+        <result column="fxdd" property="fxdd" />
+        <result column="wpzp" property="wpzp" />
+        <result column="kyxx" property="kyxx" />
+        <result column="dy_id" property="dyId" />
+        <result column="lrsj" property="lrsj" />
+    </resultMap>
+
+</mapper>

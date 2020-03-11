@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nhga.zkglpt.mapper.TblCsrMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.nhga.zkglpt.model.TblCsr">
+        <id column="id" property="id" />
+        <result column="xm" property="xm" />
+        <result column="xb" property="xb" />
+        <result column="sfzh" property="sfzh" />
+        <result column="lxdh" property="lxdh" />
+        <result column="jdxz" property="jdxz" />
+        <result column="zz" property="zz" />
+        <result column="qtms" property="qtms" />
+        <result column="ryzp" property="ryzp" />
+        <result column="type" property="type" />
+        <result column="parent_id" property="parentId" />
+    </resultMap>
+
+</mapper>

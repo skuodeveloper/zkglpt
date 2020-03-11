@@ -1,0 +1,136 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>车辆收购列表</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<style>
+			/*.mui-scroll {
+				top: 50px;
+			}*/
+		</style>
+	</head>
+
+	<body>
+		<!--<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">车辆收购列表</h1>
+		</header>-->
+
+		<div class="mui-content" id="news" class="mui-content mui-scroll-wrapper">
+			<!--下拉刷新容器-->
+			<div id="pullrefresh" class="mui-content mui-scroll-wrapper">
+				<div class="mui-scroll">
+					<!--数据列表-->
+					<ul class="mui-table-view mui-table-view-chevron">
+						<li class="mui-table-view-cell  mui-media" v-for="(item,index) in items">
+							<a href="" :data-guid="item.id" class="mui-navigate-right">
+								<div class="mui-row">
+									<div>
+										{{item.lrsj}}
+									</div>
+									<div>
+										收购了【{{item.brand}}】来自【{{item.tblCsr.xm}}】
+									</div>
+								</div>
+							</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+
+		<script src="js/mui.min.js"></script>
+		<script src="js/vue.min.js"></script>
+		<script type="text/javascript">
+			var count = 0, //总数
+				current = 1, //当前页
+				size = 10; //每页数量
+
+			var news = new Vue({
+				el: '#news',
+				data: {
+					items: [] //列表信息流数据
+				}
+			});
+
+			mui.init({
+				pullRefresh: {
+					container: '#pullrefresh',
+					down: {
+						style: 'circle',
+						offset: '0px',
+						auto: true,
+						callback: pulldownRefresh
+					},
+					up: {
+						contentrefresh: '正在加载...',
+						contentnomore: "没有更多数据了",
+						callback: pullupRefresh
+					}
+				}
+			});
+
+			/**
+			 * 下拉刷新具体业务实现
+			 */
+			function pulldownRefresh() {
+				current = 1;
+				news.items.splice(0);
+				getComputers();
+			}
+
+			//上拉刷新具体业务实现
+			function pullupRefresh() {
+				current = current + 1;
+				getComputers();
+			}
+
+			function getComputers() {
+				mui.ajax({
+					url: 'http://60.190.149.52:8015/tblCar/get',
+					data: {
+						current: current,
+						size: size,
+						dyid: localStorage.getItem("Id")
+					},
+					async: true,
+					dataType: 'json',
+					crossDomain: true, //强制使用5+跨域  
+					type: 'get',
+					timeout: 10000,
+					success: function(result) {
+						if(result.code == 0) {
+							news.items = news.items.concat(result.data);
+						} else {
+							mui.alert(result.message);
+						}
+
+						mui('#pullrefresh').pullRefresh().endPulldownToRefresh(); //收起下拉刷新栏
+						if(result.data.length > 0) {
+							mui('#pullrefresh').pullRefresh().endPullupToRefresh(false);
+						} else {
+							mui('#pullrefresh').pullRefresh().endPullupToRefresh(true);
+						}
+					},
+					error: function(XMLHttpRequest, textStatus, errorThrown) {
+						mui.alert(textStatus);
+					}
+				});
+			}
+
+			//点击列表，打开详情
+			mui('.mui-content').on('tap', '[data-guid]', function() {
+				var guid = this.getAttribute('data-guid');
+
+				//打开详情
+				mui.openWindow({
+					url: 'cardetail.html?id=' + guid
+				});
+			});
+		</script>
+	</body>
+</html>

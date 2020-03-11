@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="css/mui.picker.min.css" />
+		<style>
+			.container {
+				width: 100%;
+				height: 100%;
+				overflow: auto;
+				clear: both;
+			}
+			
+			.z_photo {
+				width: 100%;
+				height: 3rem;
+				padding: 0.3rem;
+				overflow: auto;
+				clear: both;
+				/*margin: 1rem auto;*/
+				border: 0px solid #555;
+			}
+			
+			.z_photo img {
+				width: 1rem;
+				height: 1rem;
+			}
+			
+			.z_addImg {
+				float: left;
+				margin-right: 0.4rem;
+			}
+			
+			.z_file {
+				width: 1rem;
+				height: 1rem;
+				background: url(images/z_add.png) no-repeat;
+				background-size: 100% 100%;
+				float: left;
+				margin-right: 0.4rem;
+			}
+			
+			.z_file input::-webkit-file-upload-button {
+				width: 1rem;
+				height: 1rem;
+				border: none;
+				position: absolute;
+				outline: 0;
+				opacity: 0;
+			}
+			
+			.z_file input#file {
+				display: block;
+				width: auto;
+				border: 0;
+				vertical-align: middle;
+			}
+			/*遮罩层*/
+			
+			.z_mask {
+				width: 100%;
+				height: 100%;
+				background: rgba(0, 0, 0, .5);
+				position: fixed;
+				top: 0;
+				left: 0;
+				z-index: 999;
+				display: none;
+			}
+			
+			.z_alert {
+				width: 3rem;
+				height: 2rem;
+				border-radius: .2rem;
+				background: #fff;
+				font-size: .24rem;
+				text-align: center;
+				position: absolute;
+				left: 50%;
+				top: 50%;
+				margin-left: -1.5rem;
+				margin-top: -2rem;
+			}
+			
+			.z_alert p:nth-child(1) {
+				line-height: 1.3rem;
+			}
+			
+			.z_alert p:nth-child(2) span {
+				display: inline-block;
+				width: 49%;
+				height: .5rem;
+				line-height: .5rem;
+				float: left;
+				border-top: 1px solid #ddd;
+			}
+			
+			.z_cancel {
+				border-right: 1px solid #ddd;
+			}
+			
+			.mui-input-row label {
+				width: 30%;
+				font-size: smaller;
+			}
+			
+			.mui-input-row input {
+				padding-left: 10px!important;
+				margin-bottom: 0;
+			}
+			
+			.mui-navigate-right:after,
+			.mui-push-right:after {
+				right: 25px;
+			}
+			
+			.show {}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav" style="padding-right: 15px;">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">收购金饰信息</h1>
+			<button id='setting' class=" mui-pull-right mui-btn-link">历史记录</button>
+		</header>
+		<div id="div1" class="mui-content">
+			<div class="mui-content-padded">
+				<div class="mui-input-row">
+					<label>物品名称</label>
+					<input id='wpmc' type="text" class="mui-input-clear mui-input">
+				</div>
+			</div>
+			<div class="mui-content-padded">
+				<div class="mui-input-row">
+					<label>数量</label>
+					<input id='sl' type="text" class="mui-input-clear mui-input">
+				</div>
+			</div>
+			<div class="mui-content-padded">
+				<div class="mui-input-row">
+					<label>重量</label>
+					<input id='zl' type="text" class="mui-input-clear mui-input">
+				</div>
+			</div>
+			<div class="mui-content-padded">
+				<div class="mui-input-row">
+					<label>价值</label>
+					<input id='jz' type="text" class="mui-input-clear mui-input">
+				</div>
+			</div>
+			<div class="mui-content-padded">
+				<div class="mui-input-row">
+					<label>特征描述</label>
+					<input id='tzms' type="text" class="mui-input-clear mui-input">
+				</div>
+			</div>
+			<div class="mui-content-padded">
+				<div class="mui-input-row">
+					<label>发现时间</label>
+					<input id='fxsj' type="text" class="mui-input-clear mui-input" style="width: 65%;">
+				</div>
+			</div>
+			<div class="mui-content-padded">
+				<div class="mui-input-row">
+					<label>发现地点</label>
+					<input id='fxdd' type="text" class="mui-input-clear mui-input">
+				</div>
+			</div>
+			<div class="mui-content-padded">
+				<div class="mui-input-row">
+					<label>可疑信息</label>
+					<input id='kyxx' type="text" class="mui-input-clear mui-input">
+				</div>
+			</div>
+
+			<div class="container">
+				<div class="mui-content-padded">
+					<div class="mui-input-row">
+						<label>物品照片</label>
+					</div>
+				</div>
+
+				<!--    照片添加    -->
+				<div class="z_photo">
+					<div class="z_file">
+						<input type="file" name="file" id="file" value="" accept="image/*" onchange="imgChange('z_photo','file',0);" />
+					</div>
+				</div>
+
+				<!--遮罩层-->
+				<div class="z_mask">
+					<!--弹出框-->
+					<div class="z_alert">
+						<p>确定要删除这张图片吗？</p>
+						<p>
+							<span class="z_cancel">取消</span>
+							<span class="z_sure">确定</span>
+						</p>
+					</div>
+				</div>
+			</div>
+
+			<div class="mui-content-padded">
+				<div class="mui-button-row">
+					<button id='next' type="button" class="mui-btn mui-btn-block mui-btn-primary">下一步</button>
+				</div>
+			</div>
+		</div>
+
+		<div class="mui-content mui-hidden" id="div2">
+			<div class="mui-content-padded">
+				<div class="mui-input-row">
+					<label>姓名</label>
+					<input id='xm' type="text" class="mui-input-clear mui-input">
+				</div>
+			</div>
+			<div class="mui-content-padded">
+				<div class="mui-input-row">
+					<label>性别</label>
+					<input id='xb' type="text" class="mui-input-clear mui-input">
+				</div>
+			</div>
+			<div class="mui-content-padded">
+				<div class="mui-input-row">
+					<label>身份证号</label>
+					<input id='sfzh' type="text" class="mui-input-clear mui-input">
+				</div>
+			</div>
+			<div class="mui-content-padded">
+				<div class="mui-input-row">
+					<label>联系电话</label>
+					<input id='lxdh' type="text" class="mui-input-clear mui-input">
+				</div>
+			</div>
+			<div class="mui-content-padded">
+				<div class="mui-input-row">
+					<label>街道乡镇</label>
+					<input id='jdxz' type="text" class="mui-input-clear mui-input">
+				</div>
+			</div>
+			<div class="mui-content-padded">
+				<div class="mui-input-row">
+					<label>住址</label>
+					<input id='zz' type="text" class="mui-input-clear mui-input">
+				</div>
+			</div>
+			<div class="mui-content-padded">
+				<div class="mui-input-row">
+					<label>其他描述</label>
+					<input id='qtms' type="text" class="mui-input-clear mui-input">
+				</div>
+			</div>
+			<div class="container">
+				<div class="mui-content-padded">
+					<div class="mui-input-row">
+						<label>人员照片</label>
+					</div>
+				</div>
+
+				<div class="z_photo">
+					<div class="z_file">
+						<input type="file" name="file1" id="file1" value="" accept="image/*" multiple onchange="imgChange('z_photo','file1',1);" />
+					</div>
+				</div>
+
+				<div class="z_mask">
+					<div class="z_alert">
+						<p>确定要删除这张图片吗？</p>
+						<p>
+							<span class="z_cancel">取消</span>
+							<span class="z_sure">确定</span>
+						</p>
+					</div>
+				</div>
+			</div>
+
+			<div class="mui-content-padded">
+				<div class="mui-button-row">
+					<button id='submit' type="button" class="mui-btn mui-btn-block mui-btn-primary">提交</button>
+				</div>
+			</div>
+		</div>
+
+		<script src="js/mui.min.js"></script>
+		<script src="js/jquery-1.11.0.min.js"></script>
+		<script src="js/mui.picker.min.js"></script>
+		<script>
+			//px转换为rem
+			(function(doc, win) {
+				var docEl = doc.documentElement,
+					resizeEvt = 'orientationchange' in window ? 'orientationchange' : 'resize',
+					recalc = function() {
+						var clientWidth = docEl.clientWidth;
+						if(!clientWidth) return;
+						if(clientWidth >= 640) {
+							docEl.style.fontSize = '100px';
+						} else {
+							docEl.style.fontSize = 100 * (clientWidth / 640) + 'px';
+						}
+					};
+
+				if(!doc.addEventListener) return;
+				win.addEventListener(resizeEvt, recalc, false);
+				doc.addEventListener('DOMContentLoaded', recalc, false);
+			})(document, window);
+
+			function imgChange(obj1, obj2, idx) {
+				switch(idx) {
+					case 0:
+						var imgCnt = mui('#div1 .z_addImg.show img').length;
+						//						mui('#div1 .z_addImg.show img')[0].getAttribute('src');
+
+						if(imgCnt > 5) {
+							mui.alert('物品信息最多只能上传6张图片！');
+							return;
+						}
+						break;
+					case 1:
+						var imgCnt = mui('#div2 .z_addImg.show').length;
+						if(imgCnt > 0) {
+							mui.alert('最多只能上传一张人员照片');
+							return;
+						}
+						break;
+				}
+
+				//获取点击的文本框
+				var file = document.getElementById(obj2);
+				//存放图片的父级元素
+				var imgContainer = document.getElementsByClassName(obj1)[idx];
+				//获取的图片文件
+				var fileList = file.files;
+				//遍历获取到得图片文件
+				for(var i = 0; i < fileList.length; i++) {
+					imgBase64Get(file.files[i], imgContainer, imgUrlGet);
+				};
+			};
+
+			/*
+			 * 获取上传图片的Base64编码
+			 */
+			function imgBase64Get(file, imgContainer, callback) {
+				var reader = new FileReader();
+				reader.readAsDataURL(file);
+				reader.onload = function(e) {
+					callback(imgContainer, this.result);
+				}
+			}
+
+			/*
+			 * 上传图片并获取URL
+			 */
+			function imgUrlGet(imgContainer, base64) {
+				mui.ajax('http://60.190.149.52:8015/tblDy/getImgUrl', {
+					data: {
+						base64: base64
+					},
+					dataType: 'text', //服务器返回json格式数据
+					type: 'post', //HTTP请求类型
+					timeout: 10000, //超时时间设置为10秒；
+					success: function(data) {
+						var imgUrl = data;
+						var img = document.createElement("img");
+						img.setAttribute("src", imgUrl);
+						var imgAdd = document.createElement("div");
+						imgAdd.setAttribute("class", "z_addImg");
+						imgAdd.classList.add('show');
+						imgAdd.appendChild(img);
+						imgContainer.appendChild(imgAdd);
+						imgRemove();
+					}
+				});
+			}
+
+			function imgRemove() {
+				var imgList = document.getElementsByClassName("z_addImg");
+				var mask = document.getElementsByClassName("z_mask")[0];
+				var cancel = document.getElementsByClassName("z_cancel")[0];
+				var sure = document.getElementsByClassName("z_sure")[0];
+
+				for(var j = 0; j < imgList.length; j++) {
+					imgList[j].index = j;
+					imgList[j].onclick = function() {
+						var t = this;
+						mask.style.display = "block";
+						cancel.onclick = function() {
+							mask.style.display = "none";
+						};
+						sure.onclick = function() {
+							mask.style.display = "none";
+							t.style.display = "none";
+							t.classList.remove('show');
+						};
+					}
+				};
+			};
+
+			(function($, doc) {
+				$.init();
+
+				mui('#fxsj')[0].addEventListener("tap", function() {
+					var options = {
+						type: 'date'
+					};
+					var dtPicker = new mui.DtPicker(options);
+					dtPicker.show(function(rs) {
+						mui('#fxsj')[0].value = rs.text;
+					})
+				});
+
+				mui('#setting')[0].addEventListener("tap", function() {
+					//打开详情
+					mui.openWindow({
+						url: 'goldlist.html',
+						show: {
+							aniShow: 'pop-in'
+						},
+						waiting: {
+							autoShow: true, //自动显示等待框，默认为true
+						}
+					});
+				});
+
+				mui('.mui-button-row').on('tap', '#next', function(event) {
+					var check = true;
+					mui("#div1 input").each(function() {
+						if(this.type != 'file') {
+							//若当前input为空，则alert提醒 
+							if(!this.value || this.value.trim() == "") {
+								var label = this.previousElementSibling;
+								if(label.innerText == '可疑信息')
+									return true;
+									
+								mui.alert(label.innerText + "不允许为空");
+								check = false;
+								this.focus();
+								return false;
+							}
+						}
+					}); //校验通过，继续执行业务逻辑 
+
+					if(check) {
+						mui('#div1')[0].classList.add('mui-hidden');
+						mui('#div2')[0].classList.remove('mui-hidden');
+						mui('.mui-title')[0].innerHTML = '出售人信息';
+					}
+				})
+
+				mui('.mui-button-row').on('tap', '#submit', function(event) {
+					var check = true;
+					mui("#div2 input").each(function() {
+						if(this.type != 'file') {
+							//若当前input为空，则alert提醒 
+							if(!this.value || this.value.trim() == "") {
+								var label = this.previousElementSibling;
+								if(label.innerText == '可疑信息')
+									return true;
+								mui.alert(label.innerText + "不允许为空");
+								check = false;
+								this.focus();
+								return false;
+							}
+						}
+					}); //校验通过，继续执行业务逻辑 
+					if(check) {
+						Submit();
+					}
+				})
+
+				function Submit() {
+					var imgs = mui('#div1 .z_addImg.show img');
+					var imgArr = [];
+					mui.each(imgs, function(index, item) {
+						imgArr.push(item.getAttribute('src'));
+					});
+
+					var jewelry = {
+						wpmc: mui('#wpmc')[0].value,
+						sl: mui('#sl')[0].value,
+						zl: mui('#zl')[0].value,
+						jz: mui('#jz')[0].value,
+						tzms: mui('#tzms')[0].value,
+						fxsj: mui('#fxsj')[0].value,
+						fxdd: mui('#fxdd')[0].value,
+						wpzp: JSON.stringify(imgArr),
+						kyxx: mui('#kyxx')[0].value,
+						dyId: localStorage.getItem("Id")
+					};
+
+					imgs = mui('#div2 .z_addImg.show img');
+					imgArr.splice(0)
+					mui.each(imgs, function(index, item) {
+						imgArr.push(item.getAttribute('src'));
+					});
+					var csr = {
+						xm: mui('#xm')[0].value,
+						xb: mui('#xb')[0].value,
+						sfzh: mui('#sfzh')[0].value,
+						lxdh: mui('#lxdh')[0].value,
+						jdxz: mui('#jdxz')[0].value,
+						zz: mui('#zz')[0].value,
+						qtms: mui('#qtms')[0].value,
+						ryzp: JSON.stringify(imgArr),
+						type: '金饰'
+					};
+
+					mui.ajax({
+						url: 'http://60.190.149.52:8015/tblJewelry/add',
+						data: {
+							tblJewelry: jewelry,
+							tblCsr: csr
+						},
+						async: true,
+						dataType: 'json',
+						crossDomain: true, //强制使用5+跨域  
+						type: 'post',
+						timeout: 10000,
+						headers: {
+							'Content-Type': 'application/json'
+						},
+						success: function(result) {
+							mui.alert('提交成功！', function() {
+								//打开详情
+								mui.openWindow({
+									url: 'jewelrydetail.html?id=' + result.data,
+									show: {
+										aniShow: 'pop-in'
+									},
+									waiting: {
+										autoShow: true, //自动显示等待框，默认为true
+									}
+								});
+							})
+						},
+						error: function(xhr, type, errorThrown) {}
+					});
+				}
+			}(mui, document));
+		</script>
+	</body>
+
+</html>

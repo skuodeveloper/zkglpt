@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html class="ui-page-login">
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>阵控管理平台</title>
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<link href="css/style.css" rel="stylesheet" />
+		<style>
+			a {
+				text-decoration: none;
+				color: #007aff;
+				float: right;
+			}
+			
+			.mui-input-group {
+				margin-top: 20px;
+			}
+			
+			.mui-content-padded {
+				margin-top: 25px;
+			}
+			
+			.mui-btn {
+				padding: 10px;
+			}
+			
+			.link-area {
+				display: block;
+				margin-top: 25px;
+				text-align: center;
+			}
+		</style>
+
+	</head>
+
+	<body>
+		<!--<header class="mui-bar mui-bar-nav">
+			<h1 class="mui-title">登录</h1>
+		</header>-->
+		<div class="mui-content">
+			<form id='login-form' class="mui-input-group">
+				<div class="mui-input-row">
+					<label>账号</label>
+					<input id='username' type="text" class="mui-input-clear mui-input" placeholder="请输入账号">
+				</div>
+				<div class="mui-input-row">
+					<label>密码</label>
+					<input id='password' type="password" class="mui-input-clear mui-input" placeholder="请输入密码">
+				</div>
+			</form>
+			<div class="mui-content-padded">
+				<div class="mui-button-row">
+					<button id='login' type="button" class="mui-btn mui-btn-block mui-btn-primary">登录</button>
+				</div>
+			</div>
+		</div>
+		<script src="js/mui.min.js"></script>
+		<script src="js/mui.enterfocus.js"></script>
+		<script src="http://pv.sohu.com/cityjson?ie=utf-8"></script>
+		<script>
+//			console.log(returnCitySN["cip"] + ',' + returnCitySN["cname"]) 
+		</script>
+		<script>
+			(function($, doc) {
+				var userName = localStorage.getItem("Name");
+				if(!userName || userName != "")
+					mui('#username')[0].value = userName;
+												
+				mui('.mui-button-row').on('tap', '#login', function(event) {
+					var check = true;
+					mui("input").each(function() {
+						//若当前input为空，则alert提醒 
+						if(!this.value || this.value.trim() == "") {
+							var label = this.previousElementSibling;
+							mui.alert(label.innerText + "不允许为空");
+							check = false;
+							this.focus();
+							return false;
+						}
+					}); //校验通过，继续执行业务逻辑 
+
+					if(check) {
+						mui.ajax('http://60.190.149.52:8015/tblDy/login', {
+							data: {
+								phone: mui('#username')[0].value,
+								pwd: mui('#password')[0].value,
+								ip: returnCitySN["cip"]
+							},
+							dataType: 'json', //服务器返回json格式数据
+							type: 'post', //HTTP请求类型
+							timeout: 10000, //超时时间设置为10秒；
+							headers: {
+								'Content-Type': 'application/json'
+							},
+							success: function(data) {
+								//服务器返回响应，根据响应结果，分析是否登录成功；
+								if(data.code == 0) {
+									localStorage.setItem("Name", data.data.phone); //设置
+									localStorage.setItem("Creator", data.data.mc); //设置
+									localStorage.setItem("Id", data.data.id); //设置
+									mui.openWindow({
+										url: 'category.html'
+									});
+								} else {
+									mui.alert(data.message);
+								}
+							},
+							error: function(xhr, type, errorThrown) {
+								//异常处理；
+								console.log(type);
+							}
+						});
+					}
+				})
+			}(mui, document));
+		</script>
+	</body>
+
+</html>

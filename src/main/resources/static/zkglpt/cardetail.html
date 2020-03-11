@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>车辆信息</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<style>
+			.mui-content>.mui-table-view:first-child {
+				margin: 0;
+			}
+			
+			.xm {
+				border-bottom: blue solid 1px;
+				color: blue;
+			}
+			
+			img {
+				display: inline-block;
+				width: 23%;
+				height: 70px;
+				margin: 1%;
+			}
+			
+			.mui-preview-image.mui-fullscreen {
+				position: fixed;
+				z-index: 20;
+				background-color: #000;
+			}
+			
+			.mui-preview-header,
+			.mui-preview-footer {
+				position: absolute;
+				width: 100%;
+				left: 0;
+				z-index: 10;
+			}
+			
+			.mui-preview-header {
+				height: 44px;
+				top: 0;
+			}
+			
+			.mui-preview-footer {
+				height: 50px;
+				bottom: 0px;
+			}
+			
+			.mui-preview-header .mui-preview-indicator {
+				display: block;
+				line-height: 25px;
+				color: #fff;
+				text-align: center;
+				margin: 15px auto 4;
+				width: 70px;
+				background-color: rgba(0, 0, 0, 0.4);
+				border-radius: 12px;
+				font-size: 16px;
+			}
+			
+			.mui-preview-image {
+				display: none;
+				-webkit-animation-duration: 0.5s;
+				animation-duration: 0.5s;
+				-webkit-animation-fill-mode: both;
+				animation-fill-mode: both;
+			}
+			
+			.mui-preview-image.mui-preview-in {
+				-webkit-animation-name: fadeIn;
+				animation-name: fadeIn;
+			}
+			
+			.mui-preview-image.mui-preview-out {
+				background: none;
+				-webkit-animation-name: fadeOut;
+				animation-name: fadeOut;
+			}
+			
+			.mui-preview-image.mui-preview-out .mui-preview-header,
+			.mui-preview-image.mui-preview-out .mui-preview-footer {
+				display: none;
+			}
+			
+			.mui-zoom-scroller {
+				position: absolute;
+				display: -webkit-box;
+				display: -webkit-flex;
+				display: flex;
+				-webkit-box-align: center;
+				-webkit-align-items: center;
+				align-items: center;
+				-webkit-box-pack: center;
+				-webkit-justify-content: center;
+				justify-content: center;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				top: 0;
+				width: 100%;
+				height: 100%;
+				margin: 0;
+				-webkit-backface-visibility: hidden;
+			}
+			
+			.mui-zoom {
+				-webkit-transform-style: preserve-3d;
+				transform-style: preserve-3d;
+			}
+			
+			.mui-slider .mui-slider-group .mui-slider-item img {
+				width: auto;
+				height: auto;
+				max-width: 100%;
+				max-height: 100%;
+			}
+			
+			.mui-android-4-1 .mui-slider .mui-slider-group .mui-slider-item img {
+				width: 100%;
+			}
+			
+			.mui-android-4-1 .mui-slider.mui-preview-image .mui-slider-group .mui-slider-item {
+				display: inline-table;
+			}
+			
+			.mui-android-4-1 .mui-slider.mui-preview-image .mui-zoom-scroller img {
+				display: table-cell;
+				vertical-align: middle;
+			}
+			
+			.mui-preview-loading {
+				position: absolute;
+				width: 100%;
+				height: 100%;
+				top: 0;
+				left: 0;
+				display: none;
+			}
+			
+			.mui-preview-loading.mui-active {
+				display: block;
+			}
+			
+			.mui-preview-loading .mui-spinner-white {
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				margin-left: -25px;
+				margin-top: -25px;
+				height: 50px;
+				width: 50px;
+			}
+			
+			.mui-preview-image img.mui-transitioning {
+				-webkit-transition: -webkit-transform 0.5s ease, opacity 0.5s ease;
+				transition: transform 0.5s ease, opacity 0.5s ease;
+			}
+			
+			@-webkit-keyframes fadeIn {
+				0% {
+					opacity: 0;
+				}
+				100% {
+					opacity: 1;
+				}
+			}
+			
+			@keyframes fadeIn {
+				0% {
+					opacity: 0;
+				}
+				100% {
+					opacity: 1;
+				}
+			}
+			
+			@-webkit-keyframes fadeOut {
+				0% {
+					opacity: 1;
+				}
+				100% {
+					opacity: 0;
+				}
+			}
+			
+			@keyframes fadeOut {
+				0% {
+					opacity: 1;
+				}
+				100% {
+					opacity: 0;
+				}
+			}
+			
+			p img {
+				max-width: 100%;
+				height: auto;
+			}
+		</style>
+	</head>
+
+	<body>
+		<!--<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">电脑信息</h1>
+		</header>-->
+
+		<div class="mui-content" id="news">
+			<ul class="mui-table-view">
+				<li class="mui-table-view-cell">
+					<label>车型：</label>
+					<label>{{info.brand}}</label>
+				</li>
+				<li class="mui-table-view-cell">
+					<label>类型：</label>
+					<label v-if="info.type == '0'">维修</label>
+					<label v-else>回收</label>
+				</li>
+				<li class="mui-table-view-cell">
+					<label>车辆类型：</label>
+					<label v-if="info.carType == '0'">机动车</label>
+					<label v-else>非机动车</label>
+				</li>
+				<li class="mui-table-view-cell">
+					<label>车牌号：</label>
+					<label>{{info.carNo}}</label>
+				</li>
+				<li class="mui-table-view-cell">
+					<label>特征描述：</label>
+					<label>{{info.tzms}}</label>
+				</li>
+				<li class="mui-table-view-cell">
+					<label>发动机号：</label>
+					<label>{{info.fdjh}}</label>
+				</li>
+				<li class="mui-table-view-cell">
+					<label>车架号：</label>
+					<label>{{info.cjh}}</label>
+				</li>
+				<li class="mui-table-view-cell">
+					<label>维修记录：</label>
+					<label>{{info.wxjl}}</label>
+				</li>
+				<li class="mui-table-view-cell">
+					<label>维修时间：</label>
+					<label>{{info.wxsj}}</label>
+				</li>
+				<li class="mui-table-view-cell">
+					<label>可疑信息：</label>
+					<label>{{info.kyxx}}</label>
+				</li>
+				<li id="csr" class="mui-table-view-cell">
+					<label>出售人：</label>
+					<label class="xm" v-if="info.tblCsr">{{info.tblCsr.xm}}</label>
+				</li>
+				<li class="mui-table-view-cell">
+					<img :src="src" v-for="src in info.wpzp" data-preview-src="" data-preview-group="1">
+				</li>
+			</ul>
+
+		</div>
+		<script src="js/mui.min.js"></script>
+		<script src="js/mui.zoom.js"></script>
+		<script src="js/mui.previewimage.js"></script>
+		<script src="js/jquery-1.11.0.min.js"></script>
+		<script src="js/jquery.params.js"></script>
+		<script src="js/vue.min.js"></script>
+		<script>
+			var news = new Vue({
+				el: '#news',
+				data: {
+					info: {}
+				}
+			});
+
+			mui.previewImage();
+
+			$(function() {
+				var id = $.query.get("id");
+				getComputerDetail(id);
+
+				$("#csr").on("click", function() {
+					var data = JSON.stringify(news.info.tblCsr);
+					//					mui.openWindow('csrdetail.html?data=' + data);
+					localStorage.setItem("Csr", data); //保存到本地
+					
+					//打开详情
+					mui.openWindow({
+						url: 'csrdetail.html'
+					});
+				})
+
+				function getComputerDetail(id) {
+					mui.ajax({
+						url: 'http://60.190.149.52:8015/tblCar/getDetail',
+						data: {
+							id: id
+						},
+						async: true,
+						dataType: 'json',
+						crossDomain: true, //强制使用5+跨域  
+						type: 'get',
+						timeout: 10000,
+						success: function(result) {
+							if(result.code == 0) {
+								news.info = result.data;
+								news.info.wpzp = JSON.parse(news.info.wpzp);
+							} else {
+								mui.alert(result.message);
+							}
+						},
+						error: function(XMLHttpRequest, textStatus, errorThrown) {
+							mui.alert(textStatus);
+						}
+					});
+				}
+			})
+		</script>
+	</body>
+
+</html>
