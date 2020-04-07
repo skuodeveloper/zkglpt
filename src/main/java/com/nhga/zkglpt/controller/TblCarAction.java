@@ -13,6 +13,7 @@ import com.nhga.zkglpt.mapper.TblLogMapper;
 import com.nhga.zkglpt.model.*;
 import com.nhga.zkglpt.util.IpUtil;
 import com.nhga.zkglpt.vo.TblCarVo;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -42,17 +43,18 @@ public class TblCarAction extends BaseCrudRestController {
     private TblLogMapper tblLogMapper;
     
     @CrossOrigin
-    @RequestMapping("/add")
-    public BaseEntity add(HttpServletRequest request, @RequestBody CarRequest CarRequest) {
+    @ApiOperation(value = "新增", notes = "新增二手车辆")
+    @RequestMapping(value = "/add",method = RequestMethod.POST)
+    public BaseEntity add(HttpServletRequest request, @RequestBody CarRequest carRequest) {
         BaseEntity baseEntity = new BaseEntity<>();
         try {
-            TblCar tblCar = CarRequest.getTblCar();
+            TblCar tblCar = carRequest.getTblCar();
             tblCar.setCreateDate(new Date());
             tblCar.setLrsj(new Date());
             tblCar.setIsDeleted("N");
             tblCarMapper.insert(tblCar);
 
-            TblCsr tblCsr = CarRequest.getTblCsr();
+            TblCsr tblCsr = carRequest.getTblCsr();
             tblCsr.setParentId(tblCar.getId());
             tblCsrMapper.insert(tblCsr);
 
@@ -80,7 +82,8 @@ public class TblCarAction extends BaseCrudRestController {
     }
 
     @CrossOrigin
-    @RequestMapping("/get")
+    @ApiOperation(value = "列表", notes = "获取车辆列表")
+    @RequestMapping(value = "/get", method = RequestMethod.GET)
     public BaseEntityList<TblCar> get(@RequestParam int current, @RequestParam int size, @RequestParam int dyid) {
         BaseEntityList baseEntity = new BaseEntityList<>();
         try {
@@ -89,7 +92,7 @@ public class TblCarAction extends BaseCrudRestController {
                     new QueryWrapper<TblCar>().eq("dy_id", dyid).orderByDesc("lrsj"));
 
             List<TblCarVo> tblCarVos = super.convertToVoAndBindRelations(page.getRecords(), TblCarVo.class);
-
+            tblCarVos.get(0).setIsDeleted("1");
             baseEntity.setCount(page.getTotal());
             baseEntity.setData(tblCarVos);
             return baseEntity;
@@ -101,7 +104,8 @@ public class TblCarAction extends BaseCrudRestController {
     }
 
     @CrossOrigin
-    @RequestMapping("/getDetail")
+    @ApiOperation(value = "详情", notes = "获取车辆详情")
+    @RequestMapping(value = "/getDetail", method = RequestMethod.GET)
     public JsonResult get(@RequestParam int id) {
         try {
             List<TblCar> tblComputers = tblCarMapper.selectList(new QueryWrapper<TblCar>().eq("id", id));

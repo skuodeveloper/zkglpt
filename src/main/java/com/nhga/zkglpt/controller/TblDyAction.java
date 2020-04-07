@@ -2,13 +2,13 @@ package com.nhga.zkglpt.controller;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.nhga.zkglpt.mapper.TblDyLginfoMapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.nhga.zkglpt.mapper.TblDyMapper;
 import com.nhga.zkglpt.mapper.TblLogMapper;
 import com.nhga.zkglpt.model.BaseEntity;
 import com.nhga.zkglpt.model.TblDy;
-import com.nhga.zkglpt.model.TblDyLginfo;
 import com.nhga.zkglpt.model.TblLog;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -33,6 +33,7 @@ public class TblDyAction {
     private TblLogMapper tblLogMapper;
 
     @CrossOrigin
+    @ApiOperation(value = "登录", notes = "用户登录")
     @RequestMapping("/login")
     public BaseEntity<TblDy> login(@RequestBody TblDy tblUser) {
         BaseEntity<TblDy> baseEntity = new BaseEntity<>();
@@ -62,6 +63,28 @@ public class TblDyAction {
                 tblLog.setStatus("成功");
                 tblLogMapper.insert(tblLog);
             }
+            return baseEntity;
+        } catch (Exception ex) {
+            baseEntity.setCode(-1);
+            baseEntity.setMessage(ex.getMessage());
+            return baseEntity;
+        }
+    }
+
+    @CrossOrigin
+    @ApiOperation(value = "修改", notes = "修改密码")
+    @RequestMapping(value = "/editPwd", method = RequestMethod.POST)
+    public BaseEntity<TblDy> editPwd(@RequestBody TblDy user) {
+        BaseEntity<TblDy> baseEntity = new BaseEntity<>();
+        try {
+            TblDy tblUser = tblDyMapper.selectOne(
+                    new QueryWrapper<TblDy>()
+                            .eq("phone", user.getPhone()));
+
+            tblUser.setPwd(user.getPwd());
+            //修改条件s
+            tblDyMapper.update(tblUser, new UpdateWrapper<TblDy>()
+                    .eq("phone", user.getPhone()));
             return baseEntity;
         } catch (Exception ex) {
             baseEntity.setCode(-1);

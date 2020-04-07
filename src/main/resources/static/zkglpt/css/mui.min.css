@@ -834,7 +834,7 @@ p {
 .mui-spinner {
 	display: inline-block;
 	width: 24px;
-	height: 24px;
+	height: 15px;
 	-webkit-transform-origin: 50%;
 	transform-origin: 50%;
 	-webkit-animation: spinner-spin 1s step-end infinite;

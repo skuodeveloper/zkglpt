@@ -18,6 +18,16 @@
 			.mui-btn {
 				padding: 10px;
 			}
+			
+			.edit {
+				position: absolute;
+				bottom: 0;
+				right: 0;
+				margin-bottom: 10px;
+				margin-right: 10px;
+				color: dodgerblue;
+				text-decoration: underline;
+			}
 		</style>
 	</head>
 
@@ -33,6 +43,8 @@
 				<button id="gold" type="button" class="mui-btn mui-btn-primary mui-btn-block">金饰</button>
 				<button id="car" type="button" class="mui-btn mui-btn-primary mui-btn-block">车辆</button>
 				<button id="other" type="button" class="mui-btn mui-btn-primary mui-btn-block">其他</button>
+
+				<label id="editpwd" class="edit">修改密码</label>
 			</div>
 		</div>
 	</body>
@@ -59,17 +71,24 @@
 				url: 'phone.html'
 			});
 		})
-		
+
 		mui('.mui-content-padded').on('tap', '#car', function() {
 			mui.openWindow({
 				url: 'car.html'
 			});
 		})
-		
+
 		mui('.mui-content-padded').on('tap', '#other', function() {
 			mui.openWindow({
 				url: 'other.html'
 			});
 		})
+
+		mui("#editpwd")[0].addEventListener('tap', function(event) {
+			mui.openWindow({
+				url: 'editpwd.html'
+			});
+		})
 	</script>
+
 </html>
