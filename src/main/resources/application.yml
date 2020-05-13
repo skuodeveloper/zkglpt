@@ -32,6 +32,6 @@ spring:
 #            connection-init-sqls: SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
 
 # Logger config
-logging:
-  level:
-    com.nhga.zkglpt: debug
+#logging:
+#  level:
+#    com.nhga.zkglpt: debug

@@ -49,14 +49,9 @@
         </dependency>
 
         <dependency>
-            <groupId>com.taobao.top</groupId>
-            <artifactId>top-api-sdk-dev</artifactId>
-            <version>dingtalk-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>com.taobao.top</groupId>
-            <artifactId>lippi-oapi-encrpt</artifactId>
-            <version>dingtalk-SNAPSHOT</version>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.9</version>
         </dependency>
 
         <dependency>

@@ -10,7 +10,7 @@ import java.io.Serializable;
  * </p>
  *
  * @author Alpha
- * @since 2020-03-11
+ * @since 2020-05-06
  */
 public class TblCsr implements Serializable {
 
@@ -68,6 +68,11 @@ public class TblCsr implements Serializable {
      * 物品ID
      */
     private Integer parentId;
+
+    /**
+     * 人员照片base64
+     */
+    private String ryzpBase64;
 
 
     public Integer getId() {
@@ -158,6 +163,14 @@ public class TblCsr implements Serializable {
         this.parentId = parentId;
     }
 
+    public String getRyzpBase64() {
+        return ryzpBase64;
+    }
+
+    public void setRyzpBase64(String ryzpBase64) {
+        this.ryzpBase64 = ryzpBase64;
+    }
+
     @Override
     public String toString() {
         return "TblCsr{" +
@@ -172,6 +185,7 @@ public class TblCsr implements Serializable {
         ", ryzp=" + ryzp +
         ", type=" + type +
         ", parentId=" + parentId +
+        ", ryzpBase64=" + ryzpBase64 +
         "}";
     }
 }

@@ -1,6 +1,8 @@
 package com.nhga.zkglpt.controller;
 
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.diboot.core.controller.BaseCrudRestController;
@@ -11,15 +13,19 @@ import com.nhga.zkglpt.mapper.TblDyMapper;
 import com.nhga.zkglpt.mapper.TblJewelryMapper;
 import com.nhga.zkglpt.mapper.TblLogMapper;
 import com.nhga.zkglpt.model.*;
+import com.nhga.zkglpt.util.ImageUtils;
 import com.nhga.zkglpt.util.IpUtil;
 import com.nhga.zkglpt.vo.TblComputerVo;
 import com.nhga.zkglpt.vo.TblJewelryVo;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.List;
+
+import static com.nhga.zkglpt.controller.Constant.IMG_HEAD_URL;
 
 /**
  * <p>
@@ -51,11 +57,35 @@ public class TblJewelryAction extends BaseCrudRestController {
             tblJewelry.setLrsj(new Date());
             tblJewelry.setCreateDate(new Date());
             tblJewelry.setIsDeleted("N");
+            if (StringUtils.isNotEmpty(tblJewelry.getWpzp())) {
+                JSONArray arrays = JSON.parseArray(tblJewelry.getWpzp());
+                JSONArray newArrays = new JSONArray();
+                arrays.forEach(o -> {
+                    String imgPath = o.toString();
+                    String base64 = ImageUtils.getBase64ByImgUrl("http://60.190.149.52:8096" + imgPath);
+                    base64 = "data:image/" + imgPath.substring(imgPath.lastIndexOf(".") + 1) + ";base64," + base64;
+                    newArrays.add(base64);
+                });
+                String jsonStr = JSON.toJSONString(newArrays);
+                tblJewelry.setWpzpBase64(jsonStr);
+            }
             tblJewelryMapper.insert(tblJewelry);
 
             //保存出售人记录
             TblCsr tblCsr = jewelryRequest.getTblCsr();
             tblCsr.setParentId(tblJewelry.getId());
+            if (StringUtils.isNotEmpty(tblCsr.getRyzp())) {
+                JSONArray arrays = JSON.parseArray(tblCsr.getRyzp());
+                JSONArray newArrays = new JSONArray();
+                arrays.forEach(o -> {
+                    String imgPath = o.toString();
+                    String base64 = ImageUtils.getBase64ByImgUrl(IMG_HEAD_URL + imgPath);
+                    base64 = "data:image/" + imgPath.substring(imgPath.lastIndexOf(".") + 1) + ";base64," + base64;
+                    newArrays.add(base64);
+                });
+                String jsonStr = JSON.toJSONString(newArrays);
+                tblCsr.setRyzpBase64(jsonStr);
+            }
             tblCsrMapper.insert(tblCsr);
 
             //保存操作记录

@@ -11,7 +11,7 @@ import java.util.Date;
  * </p>
  *
  * @author Alpha
- * @since 2020-03-11
+ * @since 2020-05-06
  */
 public class TblPhone implements Serializable {
 
@@ -94,6 +94,11 @@ public class TblPhone implements Serializable {
      * Y表示逻辑删除，N表示可用
      */
     private String isDeleted;
+
+    /**
+     * 物品照片base64
+     */
+    private String wpzpBase64;
 
 
     public Integer getId() {
@@ -224,6 +229,14 @@ public class TblPhone implements Serializable {
         this.isDeleted = isDeleted;
     }
 
+    public String getWpzpBase64() {
+        return wpzpBase64;
+    }
+
+    public void setWpzpBase64(String wpzpBase64) {
+        this.wpzpBase64 = wpzpBase64;
+    }
+
     @Override
     public String toString() {
         return "TblPhone{" +
@@ -243,6 +256,7 @@ public class TblPhone implements Serializable {
         ", createDate=" + createDate +
         ", modifyDate=" + modifyDate +
         ", isDeleted=" + isDeleted +
+        ", wpzpBase64=" + wpzpBase64 +
         "}";
     }
 }

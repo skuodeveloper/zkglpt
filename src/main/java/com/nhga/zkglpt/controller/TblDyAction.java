@@ -41,6 +41,8 @@ public class TblDyAction {
             List<TblDy> tblUsers = tblDyMapper.selectList(
                     new QueryWrapper<TblDy>()
                             .eq("phone", tblUser.getPhone())
+                            .or()
+                            .eq("sfzh", tblUser.getPhone())
                             .eq("pwd", tblUser.getPwd())
                             .eq("dyzt", "1"));
             if (tblUsers.size() == 0) {

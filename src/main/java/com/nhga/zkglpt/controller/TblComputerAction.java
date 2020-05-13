@@ -1,6 +1,8 @@
 package com.nhga.zkglpt.controller;
 
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.diboot.core.controller.BaseCrudRestController;
@@ -11,14 +13,18 @@ import com.nhga.zkglpt.mapper.TblCsrMapper;
 import com.nhga.zkglpt.mapper.TblDyMapper;
 import com.nhga.zkglpt.mapper.TblLogMapper;
 import com.nhga.zkglpt.model.*;
+import com.nhga.zkglpt.util.ImageUtils;
 import com.nhga.zkglpt.util.IpUtil;
 import com.nhga.zkglpt.vo.TblComputerVo;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.List;
+
+import static com.nhga.zkglpt.controller.Constant.IMG_HEAD_URL;
 
 /**
  * <p>
@@ -49,10 +55,35 @@ public class TblComputerAction extends BaseCrudRestController {
             tblComputer.setLrsj(new Date());
             tblComputer.setCreateDate(new Date());
             tblComputer.setIsDeleted("N");
+            if (StringUtils.isNotEmpty(tblComputer.getWpzp())) {
+                JSONArray arrays = JSON.parseArray(tblComputer.getWpzp());
+                JSONArray newArrays = new JSONArray();
+                arrays.forEach(o -> {
+                    String imgPath = o.toString();
+                    String base64 = ImageUtils.getBase64ByImgUrl(IMG_HEAD_URL + imgPath);
+                    base64 = "data:image/" + imgPath.substring(imgPath.lastIndexOf(".") + 1) + ";base64," + base64;
+                    newArrays.add(base64);
+                });
+                String jsonStr = JSON.toJSONString(newArrays);
+                tblComputer.setWpzpBase64(jsonStr);
+            }
+
             tblComputerMapper.insert(tblComputer);
 
             TblCsr tblCsr = computerRequest.getTblCsr();
             tblCsr.setParentId(tblComputer.getId());
+            if (StringUtils.isNotEmpty(tblCsr.getRyzp())) {
+                JSONArray arrays = JSON.parseArray(tblCsr.getRyzp());
+                JSONArray newArrays = new JSONArray();
+                arrays.forEach(o -> {
+                    String imgPath = o.toString();
+                    String base64 = ImageUtils.getBase64ByImgUrl(IMG_HEAD_URL + imgPath);
+                    base64 = "data:image/" + imgPath.substring(imgPath.lastIndexOf(".") + 1) + ";base64," + base64;
+                    newArrays.add(base64);
+                });
+                String jsonStr = JSON.toJSONString(newArrays);
+                tblCsr.setRyzpBase64(jsonStr);
+            }
             tblCsrMapper.insert(tblCsr);
 
             //保存操作记录
@@ -74,6 +105,7 @@ public class TblComputerAction extends BaseCrudRestController {
         } catch (Exception ex) {
             baseEntity.setCode(-1);
             baseEntity.setMessage(ex.getMessage());
+            System.out.println(ex.getMessage());
             return baseEntity;
         }
     }

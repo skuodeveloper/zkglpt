@@ -11,7 +11,7 @@ import java.util.Date;
  * </p>
  *
  * @author Alpha
- * @since 2020-03-11
+ * @since 2020-05-06
  */
 public class TblOther implements Serializable {
 
@@ -104,6 +104,11 @@ public class TblOther implements Serializable {
      * Y表示逻辑删除，N表示可用
      */
     private String isDeleted;
+
+    /**
+     * 物品照片base64
+     */
+    private String wpzpBase64;
 
 
     public Integer getId() {
@@ -250,6 +255,14 @@ public class TblOther implements Serializable {
         this.isDeleted = isDeleted;
     }
 
+    public String getWpzpBase64() {
+        return wpzpBase64;
+    }
+
+    public void setWpzpBase64(String wpzpBase64) {
+        this.wpzpBase64 = wpzpBase64;
+    }
+
     @Override
     public String toString() {
         return "TblOther{" +
@@ -271,6 +284,7 @@ public class TblOther implements Serializable {
         ", createDate=" + createDate +
         ", modifyDate=" + modifyDate +
         ", isDeleted=" + isDeleted +
+        ", wpzpBase64=" + wpzpBase64 +
         "}";
     }
 }

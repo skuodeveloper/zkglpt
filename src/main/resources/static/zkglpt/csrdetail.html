@@ -243,6 +243,7 @@
 				</li>
 			</ul>
 		</div>
+		<script src="js/app.js"></script>
 		<script src="js/mui.min.js"></script>
 		<script src="js/mui.zoom.js"></script>
 		<script src="js/mui.previewimage.js"></script>
@@ -263,6 +264,9 @@
 				var data = localStorage.getItem("Csr");
 				news.info = JSON.parse(data);
 				news.info.ryzp = JSON.parse(news.info.ryzp);
+				for(var i = 0; i < news.info.ryzp.length; i++) {
+					news.info.ryzp[i] = IMAGE_SERVER_URL + news.info.ryzp[i];
+				}
 			})
 		</script>
 	</body>

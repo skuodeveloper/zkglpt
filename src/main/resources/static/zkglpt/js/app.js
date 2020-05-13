@@ -1,3 +1,24 @@
+var IMAGE_SERVER_URL = 'http://60.190.149.52:8096';
+
+//px转换为rem
+(function(doc, win) {
+	var docEl = doc.documentElement,
+		resizeEvt = 'orientationchange' in window ? 'orientationchange' : 'resize',
+		recalc = function() {
+			var clientWidth = docEl.clientWidth;
+			if(!clientWidth) return;
+			if(clientWidth >= 640) {
+				docEl.style.fontSize = '100px';
+			} else {
+				docEl.style.fontSize = 100 * (clientWidth / 640) + 'px';
+			}
+		};
+
+	if(!doc.addEventListener) return;
+	win.addEventListener(resizeEvt, recalc, false);
+	doc.addEventListener('DOMContentLoaded', recalc, false);
+})(document, window);
+
 function IdCodeValid(code) {
 	//身份证号合法性验证
 	//支持15位和18位身份证号
@@ -79,4 +100,141 @@ function IdCodeValid(code) {
 		}
 	}
 	return row;
+}
+
+function imgChange(obj1, obj2, idx) {
+	//				$('#div1 .z_addImg').filter(function(){ return $(this).css('display')!='none';}).length;
+	switch(idx) {
+		case 0:
+			var imgCnt = mui('#div1 .z_addImg.show img').length;
+			//						mui('#div1 .z_addImg.show img')[0].getAttribute('src');
+
+			if(imgCnt > 5) {
+				mui.alert('物品信息最多只能上传6张图片！');
+				return;
+			}
+			break;
+		case 1:
+			var imgCnt = mui('#div2 .z_addImg.show').length;
+			if(imgCnt > 0) {
+				mui.alert('最多只能上传一张人员照片');
+				return;
+			}
+			break;
+	}
+
+	//获取点击的文本框
+	var file = document.getElementById(obj2);
+	//存放图片的父级元素
+	var imgContainer = document.getElementsByClassName(obj1)[idx];
+	//获取的图片文件
+	var fileList = file.files;
+	//遍历获取到得图片文件
+	for(var i = 0; i < fileList.length; i++) {
+		imgBase64Get(file.files[i], imgContainer, imgUrlGet);
+	};
+};
+
+/*
+ * 获取上传图片的Base64编码
+ */
+function imgBase64Get(file, imgContainer, callback) {
+	var reader = new FileReader();
+	reader.readAsDataURL(file);
+	reader.onload = function(e) {
+		callback(imgContainer, this.result);
+	}
+}
+
+/*
+ * 上传图片并获取URL
+ */
+function imgUrlGet(imgContainer, base64) {
+	dealImage(base64, 500, imgContainer, useImg);
+}
+
+function imgRemove() {
+	var imgList = mui('.z_addImg');
+	for(var j = 0; j < imgList.length; j++) {
+		imgList[j].index = j;
+		imgList[j].onclick = function() {
+			var t = this;
+			mui.confirm("确定要删除这张图片吗?", function(e) {
+				if(e.index == 1) {
+					//点确定了
+					t.style.display = "none";
+					t.classList.remove('show');
+				}
+			});
+		}
+	};
+};
+
+//然后一压 再打个桩看下长度 方法名随便起怎么舒服怎么来
+function useImg(imgContainer, base64) {
+	var url = 'http://60.190.149.52:8096/zkglxt/api/file/upload';
+	var fileExtension = base64.split(';')[0].split('/')[1];
+	console.log(fileExtension);
+
+	$.ajax({
+		type: 'post',
+		url: url, // ajax请求路径
+		data: {
+			"base64": base64,
+			"fileExtension": fileExtension
+		},
+		success: function(data) {
+			var imgUrl = 'http://60.190.149.52:8096' + data.data;
+			var img = document.createElement("img");
+			img.setAttribute("src", imgUrl);
+			var imgAdd = document.createElement("div");
+			imgAdd.setAttribute("class", "z_addImg");
+			imgAdd.classList.add('show');
+			imgAdd.appendChild(img);
+			imgContainer.appendChild(imgAdd);
+			imgRemove();
+		}
+	});
+}
+
+//压缩方法
+function dealImage(base64, w, imgContainer, callback) {
+	var newImage = new Image();
+	var quality = 0.6; //压缩系数0-1之间
+	newImage.src = base64;
+	newImage.setAttribute("crossOrigin", 'Anonymous'); //url为外域时需要
+	var imgWidth, imgHeight;
+	newImage.onload = function() {
+		imgWidth = this.width;
+		imgHeight = this.height;
+		var canvas = document.createElement("canvas");
+		var ctx = canvas.getContext("2d");
+		if(Math.max(imgWidth, imgHeight) > w) {
+			if(imgWidth > imgHeight) {
+				canvas.width = w;
+				canvas.height = w * imgHeight / imgWidth;
+			} else {
+				canvas.height = w;
+				canvas.width = w * imgWidth / imgHeight;
+			}
+		} else {
+			canvas.width = imgWidth;
+			canvas.height = imgHeight;
+			quality = 0.6;
+		}
+		ctx.clearRect(0, 0, canvas.width, canvas.height);
+		ctx.drawImage(this, 0, 0, canvas.width, canvas.height);
+		var base64 = canvas.toDataURL("image/jpeg", quality); //压缩语句
+		// 如想确保图片压缩到自己想要的尺寸,如要求在50-150kb之间，请加以下语句，quality初始值根据情况自定
+		// while (base64.length / 1024 > 150) {
+		// 	quality -= 0.01;
+		// 	base64 = canvas.toDataURL("image/jpeg", quality);
+		// }
+		// 防止最后一次压缩低于最低尺寸，只要quality递减合理，无需考虑
+		// while (base64.length / 1024 < 50) {
+		// 	quality += 0.001;
+		// 	base64 = canvas.toDataURL("image/jpeg", quality);
+		// }
+		callback(imgContainer, base64); //必须通过回调函数返回，否则无法及时拿到该值
+	}
 }

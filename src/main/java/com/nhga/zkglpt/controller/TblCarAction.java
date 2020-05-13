@@ -1,6 +1,8 @@
 package com.nhga.zkglpt.controller;
 
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.diboot.core.controller.BaseCrudRestController;
@@ -11,9 +13,11 @@ import com.nhga.zkglpt.mapper.TblCsrMapper;
 import com.nhga.zkglpt.mapper.TblDyMapper;
 import com.nhga.zkglpt.mapper.TblLogMapper;
 import com.nhga.zkglpt.model.*;
+import com.nhga.zkglpt.util.ImageUtils;
 import com.nhga.zkglpt.util.IpUtil;
 import com.nhga.zkglpt.vo.TblCarVo;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,6 +25,8 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.List;
+
+import static com.nhga.zkglpt.controller.Constant.IMG_HEAD_URL;
 
 /**
  * <p>
@@ -52,10 +58,34 @@ public class TblCarAction extends BaseCrudRestController {
             tblCar.setCreateDate(new Date());
             tblCar.setLrsj(new Date());
             tblCar.setIsDeleted("N");
+            if (StringUtils.isNotEmpty(tblCar.getWpzp())) {
+                JSONArray arrays = JSON.parseArray(tblCar.getWpzp());
+                JSONArray newArrays = new JSONArray();
+                arrays.forEach(o -> {
+                    String imgPath = o.toString();
+                    String base64 = ImageUtils.getBase64ByImgUrl("http://60.190.149.52:8096" + imgPath);
+                    base64 = "data:image/" + imgPath.substring(imgPath.lastIndexOf(".") + 1) + ";base64," + base64;
+                    newArrays.add(base64);
+                });
+                String jsonStr = JSON.toJSONString(newArrays);
+                tblCar.setWpzpBase64(jsonStr);
+            }
             tblCarMapper.insert(tblCar);
 
             TblCsr tblCsr = carRequest.getTblCsr();
             tblCsr.setParentId(tblCar.getId());
+            if (StringUtils.isNotEmpty(tblCsr.getRyzp())) {
+                JSONArray arrays = JSON.parseArray(tblCsr.getRyzp());
+                JSONArray newArrays = new JSONArray();
+                arrays.forEach(o -> {
+                    String imgPath = o.toString();
+                    String base64 = ImageUtils.getBase64ByImgUrl(IMG_HEAD_URL + imgPath);
+                    base64 = "data:image/" + imgPath.substring(imgPath.lastIndexOf(".") + 1) + ";base64," + base64;
+                    newArrays.add(base64);
+                });
+                String jsonStr = JSON.toJSONString(newArrays);
+                tblCsr.setRyzpBase64(jsonStr);
+            }
             tblCsrMapper.insert(tblCsr);
 
             //保存操作记录
@@ -108,9 +138,9 @@ public class TblCarAction extends BaseCrudRestController {
     @RequestMapping(value = "/getDetail", method = RequestMethod.GET)
     public JsonResult get(@RequestParam int id) {
         try {
-            List<TblCar> tblComputers = tblCarMapper.selectList(new QueryWrapper<TblCar>().eq("id", id));
-            List<TblCarVo> tblComputerVos = super.convertToVoAndBindRelations(tblComputers, TblCarVo.class);
-            return new JsonResult(Status.OK, tblComputerVos.get(0));
+            List<TblCar> tblCars = tblCarMapper.selectList(new QueryWrapper<TblCar>().eq("id", id));
+            List<TblCarVo> tblCarVos = super.convertToVoAndBindRelations(tblCars, TblCarVo.class);
+            return new JsonResult(Status.OK, tblCarVos.get(0));
         } catch (Exception ex) {
             return new JsonResult(Status.FAIL_EXCEPTION, ex.getMessage());
         }

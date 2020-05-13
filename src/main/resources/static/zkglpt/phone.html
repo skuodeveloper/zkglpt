@@ -224,115 +224,6 @@
 		<script src="js/mui.picker.min.js"></script>
 		<script src="js/app.js"></script>
 		<script>
-			//px转换为rem
-			(function(doc, win) {
-				var docEl = doc.documentElement,
-					resizeEvt = 'orientationchange' in window ? 'orientationchange' : 'resize',
-					recalc = function() {
-						var clientWidth = docEl.clientWidth;
-						if(!clientWidth) return;
-						if(clientWidth >= 640) {
-							docEl.style.fontSize = '100px';
-						} else {
-							docEl.style.fontSize = 100 * (clientWidth / 640) + 'px';
-						}
-					};
-
-				if(!doc.addEventListener) return;
-				win.addEventListener(resizeEvt, recalc, false);
-				doc.addEventListener('DOMContentLoaded', recalc, false);
-			})(document, window);
-
-			function imgChange(obj1, obj2, idx) {
-				//				$('#div1 .z_addImg').filter(function(){ return $(this).css('display')!='none';}).length;
-				switch(idx) {
-					case 0:
-						var imgCnt = mui('#div1 .z_addImg.show img').length;
-						//						mui('#div1 .z_addImg.show img')[0].getAttribute('src');
-
-						if(imgCnt > 5) {
-							mui.alert('物品信息最多只能上传6张图片！');
-							return;
-						}
-						break;
-					case 1:
-						var imgCnt = mui('#div2 .z_addImg.show').length;
-						if(imgCnt > 0) {
-							mui.alert('最多只能上传一张人员照片');
-							return;
-						}
-						break;
-				}
-
-				//获取点击的文本框
-				var file = document.getElementById(obj2);
-				//存放图片的父级元素
-				var imgContainer = document.getElementsByClassName(obj1)[idx];
-				//获取的图片文件
-				var fileList = file.files;
-				//遍历获取到得图片文件
-				for(var i = 0; i < fileList.length; i++) {
-					imgBase64Get(file.files[i], imgContainer, imgUrlGet);
-				};
-			};
-
-			/*
-			 * 获取上传图片的Base64编码
-			 */
-			function imgBase64Get(file, imgContainer, callback) {
-				var reader = new FileReader();
-				reader.readAsDataURL(file);
-				reader.onload = function(e) {
-					callback(imgContainer, this.result);
-				}
-			}
-
-			/*
-			 * 上传图片并获取URL
-			 */
-			function imgUrlGet(imgContainer, base64) {
-				var url = 'http://60.190.149.52:8015/tblDy/getImgUrl';
-				var fileExtension = base64.substr(11,3);
-				
-				mui.ajax(url, {
-					data: {
-						base64: base64,
-						fileExtension: fileExtension
-					},
-					dataType: 'text', //服务器返回json格式数据
-					type: 'post', //HTTP请求类型
-					timeout: 10000, //超时时间设置为10秒；
-					success: function(data) {
-						var imgUrl = data;
-						var img = document.createElement("img");
-						img.setAttribute("src", imgUrl);
-						var imgAdd = document.createElement("div");
-						imgAdd.setAttribute("class", "z_addImg");
-						imgAdd.classList.add('show');
-						imgAdd.appendChild(img);
-						imgContainer.appendChild(imgAdd);
-						imgRemove();
-					}
-				});
-			}
-
-			function imgRemove() {
-				var imgList = mui('.z_addImg');
-				for(var j = 0; j < imgList.length; j++) {
-					imgList[j].index = j;
-					imgList[j].onclick = function() {
-						var t = this;
-						mui.confirm("确定要删除这张图片吗?", function(e) {
-							if(e.index == 1) {
-								//点确定了
-								t.style.display = "none";
-								t.classList.remove('show');
-							}
-						});
-					}
-				};
-			};
-
 			(function($, doc) {
 				$.init();
 
@@ -404,6 +295,9 @@
 								if(label.innerText == '可疑信息')
 									return true;
 
+								if(label.innerText == '身份证号')
+									return true;
+									
 								mui.alert(label.innerText + "不允许为空");
 								check = false;
 								this.focus();
@@ -416,8 +310,14 @@
 						var rs = IdCodeValid(mui('#sfzh')[0].value);
 						if(rs.pass)
 							Submit();
-						else
-							mui.alert(rs.msg);
+						else {
+							var btnArray = ['否', '是'];
+							mui.confirm('身份证号格式不对，确定需要提交吗？', '确认', btnArray, function(e) {
+								if(e.index == 1) {
+									Submit();
+								}
+							});
+						}
 					}
 				})
 
@@ -491,7 +391,7 @@
 					var imgs = mui('#div1 .z_addImg.show img');
 					var imgArr = [];
 					mui.each(imgs, function(index, item) {
-						imgArr.push(item.getAttribute('src'));
+						imgArr.push(item.getAttribute('src').replace(IMAGE_SERVER_URL, ''));
 					});
 
 					var phone = {
@@ -507,10 +407,12 @@
 						creator: localStorage.getItem("Creator")
 					};
 
+					console.log(JSON.stringify(imgArr));
+
 					imgs = mui('#div2 .z_addImg.show img');
 					imgArr.splice(0)
 					mui.each(imgs, function(index, item) {
-						imgArr.push(item.getAttribute('src'));
+						imgArr.push(item.getAttribute('src').replace(IMAGE_SERVER_URL, ''));
 					});
 					var csr = {
 						xm: mui('#xm')[0].value,
