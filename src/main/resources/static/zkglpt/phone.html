@@ -129,7 +129,7 @@
 			<div class="mui-content-padded">
 				<div class="mui-input-row">
 					<label>可疑信息</label>
-					<input id='kyxx' type="text" class="mui-input-clear mui-input">
+					<input id='kyxx' type="text" placeholder="无" class="mui-input-clear mui-input">
 				</div>
 			</div>
 
@@ -278,10 +278,15 @@
 						}
 					}); //校验通过，继续执行业务逻辑 
 
+
 					if(check) {
-						mui('#div1')[0].classList.add('mui-hidden');
-						mui('#div2')[0].classList.remove('mui-hidden');
-						mui('.mui-title')[0].innerHTML = '出售人信息';
+						if(mui('#ch')[0].value.length != 15) {
+							mui.alert('手机串号输入不正确');
+						} else {
+							mui('#div1')[0].classList.add('mui-hidden');
+							mui('#div2')[0].classList.remove('mui-hidden');
+							mui('.mui-title')[0].innerHTML = '出售人信息';
+						}
 					}
 				})
 
@@ -292,12 +297,15 @@
 							//若当前input为空，则alert提醒 
 							if(!this.value || this.value.trim() == "") {
 								var label = this.previousElementSibling;
-								if(label.innerText == '可疑信息')
-									return true;
-
 								if(label.innerText == '身份证号')
 									return true;
-									
+
+								if(label.innerText == '联系电话')
+									return true;
+
+								if(label.innerText == '街道乡镇')
+									return true;
+
 								mui.alert(label.innerText + "不允许为空");
 								check = false;
 								this.focus();

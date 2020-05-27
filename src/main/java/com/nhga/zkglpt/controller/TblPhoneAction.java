@@ -133,9 +133,9 @@ public class TblPhoneAction extends BaseCrudRestController {
     @RequestMapping("/getDetail")
     public JsonResult get(@RequestParam int id) {
         try {
-            List<TblPhone> tblComputers = tblPhoneMapper.selectList(new QueryWrapper<TblPhone>().eq("id", id));
-            List<TblPhoneVo> tblComputerVos = super.convertToVoAndBindRelations(tblComputers, TblPhoneVo.class);
-            return new JsonResult(Status.OK, tblComputerVos.get(0));
+            List<TblPhone> tblPhones = tblPhoneMapper.selectList(new QueryWrapper<TblPhone>().eq("id", id));
+            List<TblPhoneVo> tblPhoneVos = super.convertToVoAndBindRelations(tblPhones, TblPhoneVo.class);
+            return new JsonResult(Status.OK, tblPhoneVos.get(0));
         } catch (Exception ex) {
             return new JsonResult(Status.FAIL_EXCEPTION, ex.getMessage());
         }

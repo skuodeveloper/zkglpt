@@ -139,7 +139,7 @@
 			<div class="mui-content-padded">
 				<div class="mui-input-row">
 					<label>可疑信息</label>
-					<input id='kyxx' type="text" class="mui-input-clear mui-input">
+					<input id='kyxx' type="text" placeholder="无" class="mui-input-clear mui-input">
 				</div>
 			</div>
 
@@ -293,6 +293,12 @@
 							if(!this.value || this.value.trim() == "") {
 								var label = this.previousElementSibling;
 								if(label.innerText == '身份证号')
+									return true;
+									
+								if(label.innerText == '联系电话')
+									return true;
+									
+								if(label.innerText == '街道乡镇')
 									return true;
 									
 								mui.alert(label.innerText + "不允许为空");

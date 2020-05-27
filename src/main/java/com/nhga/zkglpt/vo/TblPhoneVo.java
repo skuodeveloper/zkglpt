@@ -13,7 +13,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class TblPhoneVo extends TblPhone {
     // 直接关联Entity
-    @BindEntity(entity = TblCsr.class, condition="this.id=parent_id")
+    @BindEntity(entity = TblCsr.class, condition="this.id=parent_id and this.type='手机'")
     private TblCsr tblCsr;
 
     public TblCsr getTblCsr() {

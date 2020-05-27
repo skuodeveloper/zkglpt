@@ -13,7 +13,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class TblCarVo extends TblCar {
     // 直接关联Entity
-    @BindEntity(entity = TblCsr.class, condition="this.id=parent_id")
+    @BindEntity(entity = TblCsr.class, condition="this.id=parent_id and this.type='车辆'")
     private TblCsr tblCsr;
 
     public TblCsr getTblCsr() {
