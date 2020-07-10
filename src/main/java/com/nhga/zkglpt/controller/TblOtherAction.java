@@ -67,8 +67,11 @@ public class TblOtherAction extends BaseCrudRestController {
                     newArrays.add(base64);
                 });
                 String jsonStr = JSON.toJSONString(newArrays);
+                jsonStr = tblDyMapper.encryptAes(jsonStr);
                 tblOther.setWpzpBase64(jsonStr);
             }
+
+            tblOther.setWpzp(tblDyMapper.encryptAes(tblOther.getWpzp()));
             tblOtherMapper.insert(tblOther);
 
             TblCsr tblCsr = otherRequest.getTblCsr();
@@ -83,8 +86,15 @@ public class TblOtherAction extends BaseCrudRestController {
                     newArrays.add(base64);
                 });
                 String jsonStr = JSON.toJSONString(newArrays);
+                jsonStr = tblDyMapper.encryptAes(jsonStr);
                 tblCsr.setRyzpBase64(jsonStr);
             }
+
+            tblCsr.setXm(tblDyMapper.encryptAes(tblCsr.getXm()));
+            tblCsr.setSfzh(tblDyMapper.encryptAes(tblCsr.getSfzh()));
+            tblCsr.setLxdh(tblDyMapper.encryptAes(tblCsr.getLxdh()));
+            tblCsr.setZz(tblDyMapper.encryptAes(tblCsr.getZz()));
+            tblCsr.setRyzp(tblDyMapper.encryptAes(tblCsr.getRyzp()));
             tblCsrMapper.insert(tblCsr);
 
             //保存操作记录
@@ -96,7 +106,7 @@ public class TblOtherAction extends BaseCrudRestController {
             tblLog.setPhone(tblDy.getPhone());
             tblLog.setCzsj(new Date());
             tblLog.setIp(IpUtil.getIpAddr(request));
-            tblLog.setContent("新增其他物品");
+            tblLog.setContent(tblDyMapper.encryptAes("新增其他物品"));
             tblLog.setUrl("/tblOther/add");
             tblLog.setStatus("成功");
             tblLogMapper.insert(tblLog);
@@ -120,6 +130,9 @@ public class TblOtherAction extends BaseCrudRestController {
                     new QueryWrapper<TblOther>().eq("dy_id", dyid).orderByDesc("lrsj"));
 
             List<TblOtherVo> tblOtherVos = super.convertToVoAndBindRelations(page.getRecords(), TblOtherVo.class);
+            tblOtherVos.forEach(o -> {
+                o.getTblCsr().setXm(tblDyMapper.decryptAes(o.getTblCsr().getXm()));
+            });
 
             baseEntity.setCount(page.getTotal());
             baseEntity.setData(tblOtherVos);
@@ -137,6 +150,25 @@ public class TblOtherAction extends BaseCrudRestController {
         try {
             List<TblOther> tblOthers = tblOtherMapper.selectList(new QueryWrapper<TblOther>().eq("id", id));
             List<TblOtherVo> tblOtherVos = super.convertToVoAndBindRelations(tblOthers, TblOtherVo.class);
+
+            String wpzp = tblDyMapper.decryptAes(tblOtherVos.get(0).getWpzp());
+            tblOtherVos.get(0).setWpzp(wpzp);
+            String wpzpBase64 = tblDyMapper.decryptAes(tblOtherVos.get(0).getWpzpBase64());
+            tblOtherVos.get(0).setWpzpBase64(wpzpBase64);
+
+            String xm = tblDyMapper.decryptAes(tblOtherVos.get(0).getTblCsr().getXm());
+            tblOtherVos.get(0).getTblCsr().setXm(xm);
+            String sfzh = tblDyMapper.decryptAes(tblOtherVos.get(0).getTblCsr().getSfzh());
+            tblOtherVos.get(0).getTblCsr().setSfzh(sfzh);
+            String lxdh = tblDyMapper.decryptAes(tblOtherVos.get(0).getTblCsr().getLxdh());
+            tblOtherVos.get(0).getTblCsr().setLxdh(lxdh);
+            String zz = tblDyMapper.decryptAes(tblOtherVos.get(0).getTblCsr().getZz());
+            tblOtherVos.get(0).getTblCsr().setZz(zz);
+            String ryzp = tblDyMapper.decryptAes(tblOtherVos.get(0).getTblCsr().getRyzp());
+            tblOtherVos.get(0).getTblCsr().setRyzp(ryzp);
+            String ryzpBase64 = tblDyMapper.decryptAes(tblOtherVos.get(0).getTblCsr().getRyzpBase64());
+            tblOtherVos.get(0).getTblCsr().setRyzpBase64(ryzpBase64);
+
             return new JsonResult(Status.OK, tblOtherVos.get(0));
         } catch (Exception ex) {
             return new JsonResult(Status.FAIL_EXCEPTION, ex.getMessage());

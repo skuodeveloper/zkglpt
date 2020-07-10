@@ -378,8 +378,10 @@
 						type: '金饰'
 					};
 
+                    document.getElementById("submit").setAttribute("disabled", true);
+
 					mui.ajax({
-						url: 'http://60.190.149.52:8015/tblJewelry/add',
+						url: 'http://localhost:8015/tblJewelry/add',
 						data: {
 							tblJewelry: jewelry,
 							tblCsr: csr

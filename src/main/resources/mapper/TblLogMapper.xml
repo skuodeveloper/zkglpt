@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?mapper version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.nhga.zkglpt.mapper.TblLogMapper">
 
@@ -16,4 +16,18 @@
         <result column="status" property="status" />
     </resultMap>
 
+    <!--<insert id="insert" parameterType="com.nhga.zkglpt.model.TblLog">-->
+        <!--INSERT INTO tbl_log-->
+        <!--( depart_id,sfzh,xm,phone,czsj,ip,content,url,status )-->
+        <!--VALUES(-->
+        <!--#{departId},-->
+        <!--#{sfzh},-->
+        <!--#{xm},-->
+        <!--#{phone},-->
+        <!--#{czsj},-->
+        <!--#{ip},-->
+        <!--encryptAes ( #{content}, '95352362a9d342ae80043298989ff442'),-->
+        <!--#{url},-->
+        <!--#{status})-->
+    <!--</insert>-->
 </mapper>

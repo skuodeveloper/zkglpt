@@ -326,7 +326,7 @@
 				function SelectColor() {
 					var specModel = new mui.PopPicker(); //初始化 picker
 					mui.ajax({
-						url: 'http://60.190.149.52:8015/tblComputerColor/get',
+						url: 'http://localhost:8015/tblComputerColor/get',
 						data: {},
 						async: true,
 						dataType: 'json',
@@ -394,8 +394,10 @@
 						type: '其他'
 					};
 
+                    document.getElementById("submit").setAttribute("disabled", true);
+
 					mui.ajax({
-						url: 'http://60.190.149.52:8015/tblOther/add',
+						url: 'http://localhost:8015/tblOther/add',
 						data: {
 							tblOther: other,
 							tblCsr: csr

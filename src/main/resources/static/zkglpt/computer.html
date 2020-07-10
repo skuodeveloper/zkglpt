@@ -338,7 +338,7 @@
 				function SelectBrand() {
 					var specModel = new mui.PopPicker(); //初始化 picker
 					mui.ajax({
-						url: 'http://60.190.149.52:8015/tblComputerBrand/get',
+						url: 'http://localhost:8015/tblComputerBrand/get',
 						data: {},
 						async: true,
 						dataType: 'json',
@@ -372,7 +372,7 @@
 				function SelectColor() {
 					var specModel = new mui.PopPicker(); //初始化 picker
 					mui.ajax({
-						url: 'http://60.190.149.52:8015/tblComputerColor/get',
+						url: 'http://localhost:8015/tblComputerColor/get',
 						data: {},
 						async: true,
 						dataType: 'json',
@@ -440,16 +440,17 @@
 						type: '电脑'
 					};
 
+                    document.getElementById("submit").setAttribute("disabled", true);
+
 					mui.ajax({
-						url: 'http://60.190.149.52:8015/tblComputer/add',
-						//						url: 'http://localhost:8015/tblComputer/add',
+						url: 'http://localhost:8015/tblComputer/add',
 						data: {
 							tblComputer: computer,
 							tblCsr: csr
 						},
 						async: true,
 						dataType: 'json',
-						crossDomain: true, //强制使用5+跨域  
+						crossDomain: true, //强制使用5+跨域
 						type: 'post',
 						timeout: 10000,
 						headers: {
@@ -475,5 +476,4 @@
 			}(mui, document));
 		</script>
 	</body>
-
 </html>

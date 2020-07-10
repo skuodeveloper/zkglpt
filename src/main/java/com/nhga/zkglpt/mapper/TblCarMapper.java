@@ -12,5 +12,6 @@ import com.nhga.zkglpt.model.TblCar;
  * @since 2020-02-28
  */
 public interface TblCarMapper extends BaseMapper<TblCar> {
-
+//    @Override
+//    int insert(TblCar tblCar);
 }

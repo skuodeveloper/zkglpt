@@ -68,8 +68,14 @@ public class TblCarAction extends BaseCrudRestController {
                     newArrays.add(base64);
                 });
                 String jsonStr = JSON.toJSONString(newArrays);
+                jsonStr = tblDyMapper.encryptAes(jsonStr);
                 tblCar.setWpzpBase64(jsonStr);
             }
+
+            tblCar.setCarNo(tblDyMapper.encryptAes(tblCar.getCarNo()));
+            tblCar.setFdjh(tblDyMapper.encryptAes(tblCar.getFdjh()));
+            tblCar.setCjh(tblDyMapper.encryptAes(tblCar.getCjh()));
+            tblCar.setWpzp(tblDyMapper.encryptAes(tblCar.getWpzp()));
             tblCarMapper.insert(tblCar);
 
             TblCsr tblCsr = carRequest.getTblCsr();
@@ -84,8 +90,15 @@ public class TblCarAction extends BaseCrudRestController {
                     newArrays.add(base64);
                 });
                 String jsonStr = JSON.toJSONString(newArrays);
+                jsonStr = tblDyMapper.encryptAes(jsonStr);
                 tblCsr.setRyzpBase64(jsonStr);
             }
+
+            tblCsr.setXm(tblDyMapper.encryptAes(tblCsr.getXm()));
+            tblCsr.setSfzh(tblDyMapper.encryptAes(tblCsr.getSfzh()));
+            tblCsr.setLxdh(tblDyMapper.encryptAes(tblCsr.getLxdh()));
+            tblCsr.setZz(tblDyMapper.encryptAes(tblCsr.getZz()));
+            tblCsr.setRyzp(tblDyMapper.encryptAes(tblCsr.getRyzp()));
             tblCsrMapper.insert(tblCsr);
 
             //保存操作记录
@@ -97,7 +110,7 @@ public class TblCarAction extends BaseCrudRestController {
             tblLog.setPhone(tblDy.getPhone());
             tblLog.setCzsj(new Date());
             tblLog.setIp(IpUtil.getIpAddr(request));
-            tblLog.setContent("新增车辆");
+            tblLog.setContent(tblDyMapper.encryptAes("新增车辆"));
             tblLog.setUrl("/tblCar/add");
             tblLog.setStatus("成功");
             tblLogMapper.insert(tblLog);
@@ -122,7 +135,10 @@ public class TblCarAction extends BaseCrudRestController {
                     new QueryWrapper<TblCar>().eq("dy_id", dyid).orderByDesc("lrsj"));
 
             List<TblCarVo> tblCarVos = super.convertToVoAndBindRelations(page.getRecords(), TblCarVo.class);
-            tblCarVos.get(0).setIsDeleted("1");
+            tblCarVos.forEach(o -> {
+                o.getTblCsr().setXm(tblDyMapper.decryptAes(o.getTblCsr().getXm()));
+            });
+
             baseEntity.setCount(page.getTotal());
             baseEntity.setData(tblCarVos);
             return baseEntity;
@@ -140,6 +156,33 @@ public class TblCarAction extends BaseCrudRestController {
         try {
             List<TblCar> tblCars = tblCarMapper.selectList(new QueryWrapper<TblCar>().eq("id", id));
             List<TblCarVo> tblCarVos = super.convertToVoAndBindRelations(tblCars, TblCarVo.class);
+
+            String carNo = tblDyMapper.decryptAes(tblCarVos.get(0).getCarNo());
+            tblCarVos.get(0).setCarNo(carNo);
+
+            String fdjh = tblDyMapper.decryptAes(tblCarVos.get(0).getFdjh());
+            tblCarVos.get(0).setFdjh(fdjh);
+
+            String cjh = tblDyMapper.decryptAes(tblCarVos.get(0).getCjh());
+            tblCarVos.get(0).setCjh(cjh);
+
+            String wpzp = tblDyMapper.decryptAes(tblCarVos.get(0).getWpzp());
+            tblCarVos.get(0).setWpzp(wpzp);
+            String wpzpBase64 = tblDyMapper.decryptAes(tblCarVos.get(0).getWpzpBase64());
+            tblCarVos.get(0).setWpzpBase64(wpzpBase64);
+
+            String xm = tblDyMapper.decryptAes(tblCarVos.get(0).getTblCsr().getXm());
+            tblCarVos.get(0).getTblCsr().setXm(xm);
+            String sfzh = tblDyMapper.decryptAes(tblCarVos.get(0).getTblCsr().getSfzh());
+            tblCarVos.get(0).getTblCsr().setSfzh(sfzh);
+            String lxdh = tblDyMapper.decryptAes(tblCarVos.get(0).getTblCsr().getLxdh());
+            tblCarVos.get(0).getTblCsr().setLxdh(lxdh);
+            String zz = tblDyMapper.decryptAes(tblCarVos.get(0).getTblCsr().getZz());
+            tblCarVos.get(0).getTblCsr().setZz(zz);
+            String ryzp = tblDyMapper.decryptAes(tblCarVos.get(0).getTblCsr().getRyzp());
+            tblCarVos.get(0).getTblCsr().setRyzp(ryzp);
+            String ryzpBase64 = tblDyMapper.decryptAes(tblCarVos.get(0).getTblCsr().getRyzpBase64());
+            tblCarVos.get(0).getTblCsr().setRyzpBase64(ryzpBase64);
             return new JsonResult(Status.OK, tblCarVos.get(0));
         } catch (Exception ex) {
             return new JsonResult(Status.FAIL_EXCEPTION, ex.getMessage());

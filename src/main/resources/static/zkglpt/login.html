@@ -59,7 +59,7 @@
 		</div>
 		<script src="js/mui.min.js"></script>
 		<script src="js/mui.enterfocus.js"></script>
-		<script src="http://pv.sohu.com/cityjson?ie=utf-8"></script>
+		<!--<script src="http://pv.sohu.com/cityjson?ie=utf-8"></script>-->
 		<script>
 			(function($, doc) {
 				var userName = localStorage.getItem("Name");
@@ -82,11 +82,11 @@
 					if(check) {
 						mui('.mui-btn').button('loading');
 
-						mui.ajax('http://60.190.149.52:8015/tblDy/login', {
+						mui.ajax('http://localhost:8015/tblDy/login', {
 							data: {
 								phone: mui('#username')[0].value,
 								pwd: mui('#password')[0].value,
-								ip: returnCitySN["cip"]
+								//ip: returnCitySN["cip"]
 							},
 							dataType: 'json', //服务器返回json格式数据
 							type: 'post', //HTTP请求类型

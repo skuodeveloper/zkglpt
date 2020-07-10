@@ -1,7 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?mapper version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.nhga.zkglpt.mapper.TblCarMapper">
-
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.nhga.zkglpt.model.TblCar">
         <id column="id" property="id" />
@@ -20,4 +19,22 @@
         <result column="lrsj" property="lrsj" />
     </resultMap>
 
+    <!--<insert id="insert" parameterType="com.nhga.zkglpt.model.TblCar">-->
+        <!--INSERT INTO tblCar-->
+        <!--( brand,type,car_type,car_no,tzms,fdjh,cjh,wxjl,wxsj,wpzp,kyxx,dy_id,lrsj )-->
+        <!--VALUES(-->
+        <!--#{brand},-->
+        <!--#{type},-->
+        <!--#{car_type},-->
+        <!--#{car_no},-->
+        <!--#{tzms},-->
+        <!--#{fdjh},-->
+        <!--#{cjh},-->
+        <!--#{wxjl},-->
+        <!--#{wxsj},-->
+        <!--#{wpzp},-->
+        <!--#{kyxx},-->
+        <!--#{dy_id},-->
+        <!--hex(AES_ENCRYPT(#{content}, '95352362a9d342ae80043298989ff442')))-->
+    <!--</insert>-->
 </mapper>

@@ -13,5 +13,6 @@ import com.nhga.zkglpt.model.TblLog;
  * @since 2020-02-21
  */
 public interface TblLogMapper extends BaseMapper<TblLog> {
-
+//    @Override
+//    int insert(TblLog tblLog);
 }

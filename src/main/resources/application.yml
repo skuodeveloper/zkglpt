@@ -4,7 +4,8 @@ spring:
     driver-class-name: com.mysql.jdbc.Driver
 #    schema: classpath:db/schema-h2.sql
 #    data: classpath:db/data-h2.sql
-    url: jdbc:mysql://60.190.149.52:33060/zkglpt?useUnicode=true&characterEncoding=utf8&autoReconnect=true&allowMultiQueries=true&useSSL=false&&serverTimezone=UTC
+#    url: jdbc:mysql://60.190.149.52:33060/zkglpt?useUnicode=true&characterEncoding=utf8&autoReconnect=true&allowMultiQueries=true&useSSL=false&&serverTimezone=UTC
+    url: jdbc:mysql://localhost:3306/zkglpt?useUnicode=true&characterEncoding=utf8&autoReconnect=true&allowMultiQueries=true&useSSL=false&&serverTimezone=UTC
     username: nhga
     password: 0573@nhga
     #   hikari数据源配置，
@@ -32,6 +33,6 @@ spring:
 #            connection-init-sqls: SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
 
 # Logger config
-#logging:
-#  level:
-#    com.nhga.zkglpt: debug
+logging:
+  level:
+    com.nhga.zkglpt: debug

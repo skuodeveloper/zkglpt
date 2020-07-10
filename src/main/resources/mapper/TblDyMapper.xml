@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?mapper version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.nhga.zkglpt.mapper.TblDyMapper">
 
@@ -21,4 +21,13 @@
         <result column="is_deleted" property="isDeleted" />
     </resultMap>
 
+    <select id="getDyList" resultType="com.nhga.zkglpt.model.TblDy" parameterType="com.nhga.zkglpt.model.TblDy">
+        SELECT
+            id, sfzh, mc, pwd, phone
+        FROM tbl_dy
+        WHERE ( phone = encryptAes ( #{phone}, '95352362a9d342ae80043298989ff442' )
+        OR sfzh = encryptAes ( #{sfzh}, '95352362a9d342ae80043298989ff442' ))
+        AND pwd = encryptAes ( #{pwd}, '95352362a9d342ae80043298989ff442' )
+        AND dyzt = 1
+    </select>
 </mapper>

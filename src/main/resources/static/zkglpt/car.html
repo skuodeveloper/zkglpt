@@ -419,8 +419,10 @@
 						type: '车辆'
 					};
 
+                    document.getElementById("submit").setAttribute("disabled", true);
+
 					mui.ajax({
-						url: 'http://60.190.149.52:8015/tblCar/add',
+						url: 'http://localhost:8015/tblCar/add',
 						data: {
 							tblCar: car,
 							tblCsr: csr

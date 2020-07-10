@@ -38,13 +38,20 @@ public class TblDyAction {
     public BaseEntity<TblDy> login(@RequestBody TblDy tblUser) {
         BaseEntity<TblDy> baseEntity = new BaseEntity<>();
         try {
+            String phone = tblDyMapper.encryptAes(tblUser.getPhone());
+            String sfzh =  tblDyMapper.encryptAes(tblUser.getPhone());
+            String pwd = tblDyMapper.encryptAes(tblUser.getPwd());
+
             List<TblDy> tblUsers = tblDyMapper.selectList(
                     new QueryWrapper<TblDy>()
-                            .eq("phone", tblUser.getPhone())
+                            .eq("phone", phone)
                             .or()
-                            .eq("sfzh", tblUser.getPhone())
-                            .eq("pwd", tblUser.getPwd())
+                            .eq("sfzh", sfzh)
+                            .eq("pwd", pwd)
                             .eq("dyzt", "1"));
+
+//            List<TblDy> tblUsers = tblDyMapper.getDyList(tblUser);
+
             if (tblUsers.size() == 0) {
                 baseEntity.setCode(-1);
                 baseEntity.setMessage("对不起，您输入的用户名或密码不正确！");
@@ -60,7 +67,9 @@ public class TblDyAction {
                 tblLog.setPhone(tblUsers.get(0).getPhone());
                 tblLog.setCzsj(new Date());
                 tblLog.setIp(tblUser.getIp());
-                tblLog.setContent("店员登录");
+
+                String content = tblDyMapper.encryptAes("店员登录");
+                tblLog.setContent(content);
                 tblLog.setUrl("/tblDy/login");
                 tblLog.setStatus("成功");
                 tblLogMapper.insert(tblLog);

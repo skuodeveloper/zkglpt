@@ -65,8 +65,15 @@ public class TblComputerAction extends BaseCrudRestController {
                     newArrays.add(base64);
                 });
                 String jsonStr = JSON.toJSONString(newArrays);
+                jsonStr = tblDyMapper.encryptAes(jsonStr);
                 tblComputer.setWpzpBase64(jsonStr);
             }
+
+            String xlh = tblDyMapper.encryptAes(tblComputer.getXlh());
+            tblComputer.setXlh(xlh);
+
+            String wpzp = tblDyMapper.encryptAes(tblComputer.getWpzp());
+            tblComputer.setWpzp(wpzp);
 
             tblComputerMapper.insert(tblComputer);
 
@@ -82,8 +89,15 @@ public class TblComputerAction extends BaseCrudRestController {
                     newArrays.add(base64);
                 });
                 String jsonStr = JSON.toJSONString(newArrays);
+                jsonStr = tblDyMapper.encryptAes(jsonStr);
                 tblCsr.setRyzpBase64(jsonStr);
             }
+            tblCsr.setXm(tblDyMapper.encryptAes(tblCsr.getXm()));
+            tblCsr.setSfzh(tblDyMapper.encryptAes(tblCsr.getSfzh()));
+            tblCsr.setLxdh(tblDyMapper.encryptAes(tblCsr.getLxdh()));
+            tblCsr.setZz(tblDyMapper.encryptAes(tblCsr.getZz()));
+            tblCsr.setRyzp(tblDyMapper.encryptAes(tblCsr.getRyzp()));
+
             tblCsrMapper.insert(tblCsr);
 
             //保存操作记录
@@ -95,7 +109,8 @@ public class TblComputerAction extends BaseCrudRestController {
             tblLog.setPhone(tblDy.getPhone());
             tblLog.setCzsj(new Date());
             tblLog.setIp(IpUtil.getIpAddr(request));
-            tblLog.setContent("新增电脑");
+            String content = tblDyMapper.encryptAes("新增电脑");
+            tblLog.setContent(content);
             tblLog.setUrl("/tblComputer/add");
             tblLog.setStatus("成功");
             tblLogMapper.insert(tblLog);
@@ -120,6 +135,9 @@ public class TblComputerAction extends BaseCrudRestController {
                     new QueryWrapper<TblComputer>().eq("dy_id", dyid).orderByDesc("lrsj"));
 
             List<TblComputerVo> tblComputerVos = super.convertToVoAndBindRelations(page.getRecords(), TblComputerVo.class);
+            tblComputerVos.forEach(o -> {
+                o.getTblCsr().setXm(tblDyMapper.decryptAes(o.getTblCsr().getXm()));
+            });
 
             baseEntity.setCount(page.getTotal());
             baseEntity.setData(tblComputerVos);
@@ -137,6 +155,27 @@ public class TblComputerAction extends BaseCrudRestController {
         try {
             List<TblComputer> tblComputers = tblComputerMapper.selectList(new QueryWrapper<TblComputer>().eq("id", id));
             List<TblComputerVo> tblComputerVos = super.convertToVoAndBindRelations(tblComputers, TblComputerVo.class);
+
+            String xlh = tblDyMapper.decryptAes(tblComputerVos.get(0).getXlh());
+            tblComputerVos.get(0).setXlh(xlh);
+            String wpzp = tblDyMapper.decryptAes(tblComputerVos.get(0).getWpzp());
+            tblComputerVos.get(0).setWpzp(wpzp);
+            String wpzpBase64 = tblDyMapper.decryptAes(tblComputerVos.get(0).getWpzpBase64());
+            tblComputerVos.get(0).setWpzpBase64(wpzpBase64);
+
+            String xm = tblDyMapper.decryptAes(tblComputerVos.get(0).getTblCsr().getXm());
+            tblComputerVos.get(0).getTblCsr().setXm(xm);
+            String sfzh = tblDyMapper.decryptAes(tblComputerVos.get(0).getTblCsr().getSfzh());
+            tblComputerVos.get(0).getTblCsr().setSfzh(sfzh);
+            String lxdh = tblDyMapper.decryptAes(tblComputerVos.get(0).getTblCsr().getLxdh());
+            tblComputerVos.get(0).getTblCsr().setLxdh(lxdh);
+            String zz = tblDyMapper.decryptAes(tblComputerVos.get(0).getTblCsr().getZz());
+            tblComputerVos.get(0).getTblCsr().setZz(zz);
+            String ryzp = tblDyMapper.decryptAes(tblComputerVos.get(0).getTblCsr().getRyzp());
+            tblComputerVos.get(0).getTblCsr().setRyzp(ryzp);
+            String ryzpBase64 = tblDyMapper.decryptAes(tblComputerVos.get(0).getTblCsr().getRyzpBase64());
+            tblComputerVos.get(0).getTblCsr().setRyzpBase64(ryzpBase64);
+
             return new JsonResult(Status.OK, tblComputerVos.get(0));
         } catch (Exception ex) {
             return new JsonResult(Status.FAIL_EXCEPTION, ex.getMessage());

@@ -65,8 +65,12 @@ public class TblPhoneAction extends BaseCrudRestController {
                     newArrays.add(base64);
                 });
                 String jsonStr = JSON.toJSONString(newArrays);
+                jsonStr = tblDyMapper.encryptAes(jsonStr);
                 tblPhone.setWpzpBase64(jsonStr);
             }
+
+            tblPhone.setCh(tblDyMapper.encryptAes(tblPhone.getCh()));
+            tblPhone.setWpzp(tblDyMapper.encryptAes(tblPhone.getWpzp()));
             tblPhoneMapper.insert(tblPhone);
 
             TblCsr tblCsr = phoneRequest.getTblCsr();
@@ -81,8 +85,15 @@ public class TblPhoneAction extends BaseCrudRestController {
                     newArrays.add(base64);
                 });
                 String jsonStr = JSON.toJSONString(newArrays);
+                jsonStr = tblDyMapper.encryptAes(jsonStr);
                 tblCsr.setRyzpBase64(jsonStr);
             }
+
+            tblCsr.setXm(tblDyMapper.encryptAes(tblCsr.getXm()));
+            tblCsr.setSfzh(tblDyMapper.encryptAes(tblCsr.getSfzh()));
+            tblCsr.setLxdh(tblDyMapper.encryptAes(tblCsr.getLxdh()));
+            tblCsr.setZz(tblDyMapper.encryptAes(tblCsr.getZz()));
+            tblCsr.setRyzp(tblDyMapper.encryptAes(tblCsr.getRyzp()));
             tblCsrMapper.insert(tblCsr);
 
             //保存操作记录
@@ -94,7 +105,7 @@ public class TblPhoneAction extends BaseCrudRestController {
             tblLog.setPhone(tblDy.getPhone());
             tblLog.setCzsj(new Date());
             tblLog.setIp(IpUtil.getIpAddr(request));
-            tblLog.setContent("新增手机");
+            tblLog.setContent(tblDyMapper.encryptAes("新增手机"));
             tblLog.setUrl("/tblPhone/add");
             tblLog.setStatus("成功");
             tblLogMapper.insert(tblLog);
@@ -118,6 +129,9 @@ public class TblPhoneAction extends BaseCrudRestController {
                     new QueryWrapper<TblPhone>().eq("dy_id", dyid).orderByDesc("lrsj"));
 
             List<TblPhoneVo> tblPhoneVos = super.convertToVoAndBindRelations(page.getRecords(), TblPhoneVo.class);
+            tblPhoneVos.forEach(o -> {
+                o.getTblCsr().setXm(tblDyMapper.decryptAes(o.getTblCsr().getXm()));
+            });
 
             baseEntity.setCount(page.getTotal());
             baseEntity.setData(tblPhoneVos);
@@ -135,6 +149,26 @@ public class TblPhoneAction extends BaseCrudRestController {
         try {
             List<TblPhone> tblPhones = tblPhoneMapper.selectList(new QueryWrapper<TblPhone>().eq("id", id));
             List<TblPhoneVo> tblPhoneVos = super.convertToVoAndBindRelations(tblPhones, TblPhoneVo.class);
+
+            String ch = tblDyMapper.decryptAes(tblPhoneVos.get(0).getCh());
+            tblPhoneVos.get(0).setCh(ch);
+            String wpzp = tblDyMapper.decryptAes(tblPhoneVos.get(0).getWpzp());
+            tblPhoneVos.get(0).setWpzp(wpzp);
+            String wpzpBase64 = tblDyMapper.decryptAes(tblPhoneVos.get(0).getWpzpBase64());
+            tblPhoneVos.get(0).setWpzpBase64(wpzpBase64);
+
+            String xm = tblDyMapper.decryptAes(tblPhoneVos.get(0).getTblCsr().getXm());
+            tblPhoneVos.get(0).getTblCsr().setXm(xm);
+            String sfzh = tblDyMapper.decryptAes(tblPhoneVos.get(0).getTblCsr().getSfzh());
+            tblPhoneVos.get(0).getTblCsr().setSfzh(sfzh);
+            String lxdh = tblDyMapper.decryptAes(tblPhoneVos.get(0).getTblCsr().getLxdh());
+            tblPhoneVos.get(0).getTblCsr().setLxdh(lxdh);
+            String zz = tblDyMapper.decryptAes(tblPhoneVos.get(0).getTblCsr().getZz());
+            tblPhoneVos.get(0).getTblCsr().setZz(zz);
+            String ryzp = tblDyMapper.decryptAes(tblPhoneVos.get(0).getTblCsr().getRyzp());
+            tblPhoneVos.get(0).getTblCsr().setRyzp(ryzp);
+            String ryzpBase64 = tblDyMapper.decryptAes(tblPhoneVos.get(0).getTblCsr().getRyzpBase64());
+            tblPhoneVos.get(0).getTblCsr().setRyzpBase64(ryzpBase64);
             return new JsonResult(Status.OK, tblPhoneVos.get(0));
         } catch (Exception ex) {
             return new JsonResult(Status.FAIL_EXCEPTION, ex.getMessage());
